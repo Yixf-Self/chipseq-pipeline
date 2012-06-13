@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<pipe:pipeline xmlns:pipe="http://cancerresearchuk.org/pipeline/1.2"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://cancerresearchuk.org/pipeline/1.2 http://uk-cri-lsol03:8080/solexa/solexa01/schema/workflow/pipeline-1.2.xsd">
+
+    <name>BamGetProcess Pipeline</name>
+    <description>Pipeline for getting Bam files for the ChIPseqPipeline.</description>
+
+    <tasks>
+        
+
+
+	<specialisationSet name="BamGetter" type="BamGetter" variable="trio">
+
+	<subtasks> 
+       
+	 <task name="FQGetProcess" type="FQGetProcess">
+        <resources>
+            <memory>2G</memory>
+        </resources>
+    	<outputs>
+       	<output name="ReceivedFQ">${WorkingDirectory}/FQFiles/${Bam_Name}.log</output>
+    	</outputs>
+
+    	<arguments>
+    	    <arg name="BamToGrab">${BamToGet}</arg>
+	    <arg name="BamName">${Bam_Name}</arg>
+    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	</arguments> 
+            
+	</task>
+	     </subtasks>
+      </specialisationSet>
+
+
+    </tasks>
+</pipe:pipeline>
