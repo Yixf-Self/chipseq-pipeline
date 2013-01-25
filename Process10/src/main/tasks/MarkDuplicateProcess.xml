@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<task:task xmlns:task="http://cancerresearchuk.org/task/1.2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://cancerresearchuk.org/task/1.2 http://uk-cri-lsol03:8080/solexa/solexa01/schema/workflow/task-1.2.xsd">
+
+    <name>MarkDuplicateProcess</name>
+    <description>Bam merging for ChIPseqPipeline.</description>
+
+    <program type="commandLine">
+        <executable>
+	java -Xmx8g -jar /lustre/mib-cri/carrol09/Picard/MarkDuplicates.jar INPUT=${TheDirectory}/bamFiles/${OutputName}_TMP.bam ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${OutputName}.bwa.bam METRICS_FILE=${TheDirectory}/bamFiles/${OutputName}.metrics VALIDATION_STRINGENCY=SILENT
+	rm ${TheDirectory}/bamFiles/${OutputName}.metrics
+	rm ${TheDirectory}/bamFiles/${OutputName}_TMP.bam
+	</executable>
+    </program>
+	<inputs>
+		 <input name="MergedFile"/>
+	</inputs>
+	
+    <outputs>
+        <output name="MarkedFile" required="true" safeNaming="false" description="MarkedFile by pipeline" />
+    </outputs>
+
+    <arguments>
+	<arg name="TheDirectory" required="true" description="Name for Macs output"/>
+	<arg name="OutputName" required="true" description="Name for Macs output"/>
+    </arguments>
+
+</task:task>

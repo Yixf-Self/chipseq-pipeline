@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<meta:metadata xmlns:meta="http://cancerresearchuk.org/pipeline-meta/1.2"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://cancerresearchuk.org/pipeline-meta/1.2 http://uk-cri-lsol03:8080/solexa/solexa01/schema/workflow/metadata-1.2.xsd">
+    <mode>lsf</mode>
+    <pipeline>/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/FQGettingPipeline.xml</pipeline>
+    <tempDirectory>TempDirectory_ToChange</tempDirectory>
+    <summaryFile errorsOnly="true">${WorkingDirectory}/errors</summaryFile>
+    <taskDirectories>
+        <directory>/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/tasks</directory>
+    </taskDirectories>
+    <executionConfiguration>
+        <execution mode="lsf">
+            <lsfOutputDirectory>${temp}/JobOutputs</lsfOutputDirectory>
+            <queue>bioinformatics</queue>
+            <maximumSubmittedJobs>75</maximumSubmittedJobs>
+        </execution>
+        <execution mode="local">
+            <maxCpuResources>1</maxCpuResources>
+        </execution>
+    </executionConfiguration>
+    <variables>
+	<WorkingDirectory>WorkingDirectory_ToChange</WorkingDirectory>
+    </variables>
+
+
+  <specialisations>
+
+    <specialisation identifier="Indentifier_ToChange" active="true">
+      <variables>
+
+<BamToGet>Bam_To_Get</BamToGet>
+<Bam_Name>Bam_Name_To_Get</Bam_Name>
+    </variables>
+  </specialisation>
+
+
+  </specialisations>
+
+</meta:metadata>
