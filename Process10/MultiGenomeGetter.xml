@@ -5,7 +5,7 @@
 
     <mode>lsf</mode>
     <pipeline>/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MultiGenomeGetterPipe.xml</pipeline>
-    <tempDirectory>${WorkingDirectory}/temp</tempDirectory>
+    <tempDirectory>${WorkingDirectory}/Temp</tempDirectory>
     <summaryFile errorsOnly="true">${WorkingDirectory}/errors</summaryFile>
     <taskDirectories>
         <directory>/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/tasks</directory>

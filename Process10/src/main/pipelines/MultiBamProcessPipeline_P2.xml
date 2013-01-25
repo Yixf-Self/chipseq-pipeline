@@ -80,8 +80,91 @@
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
     	</arguments> 
 
+               </task>
+        <task name="TSSAverageCoverageProcess" type="AverageCoverageProcess">
+	                    <resources>
+	                        <memory>4G</memory>
+	                    </resources>
+	                   
+	                    <inputs>
+                		<input name="bam_processed">${BamDirectory}/${Test}.bam</input>
+	                    </inputs>
+	
+	                    <outputs>
+	                        <output name="CovProfile">${WorkingDirectory}/Coverage/TSS_AvCov_${Test}.RData</output>
+	                    </outputs>
+
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+           <arg name="genomeName">${genomeName}</arg>
+    	</arguments> 
+               </task>
+
+
+        <task name="CountingReadsInFeatures" type="CountingReadsInFeatures">
+	                    <resources>
+	                        <memory>4G</memory>
+	                    </resources>
+	                   
+	                    <inputs>
+                		<input name="bam_processed">${BamDirectory}/${Test}.bam</input>
+	                    </inputs>
+	
+	                    <outputs>
+	                        <output name="FeatureCounts">${WorkingDirectory}/Coverage/${Test}_ReadCountsInFeatures.txt</output>
+	                    </outputs>
+
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+           <arg name="genomeName">${genomeName}</arg>
+    	</arguments> 
+               </task>
+
+
+     <task name="CoverageDispersionProcess" type="CoverageDispersionProcess">
+	                    <resources>
+	                        <memory>4G</memory>
+	                    </resources>
+	                   
+	                    <inputs>
+                		<input name="bam_processed">${BamDirectory}/${Test}.bam</input>
+	                    </inputs>
+	
+	                    <outputs>
+	                        <output name="CovDispersion">${WorkingDirectory}/Coverage/${Test}_CoverageDispersion.RData</output>
+	                    </outputs>
+
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}/Coverage/</arg>
+           <arg name="genomeName">${genomeName}</arg>
+    	</arguments> 
+
+
 	</task>
-                
+
+  <!-- 
+      <task name="CrossCorrelationProcess" type="CrossCorrelationProcess">
+	                    <resources>
+	                        <memory>8G</memory>
+	                    </resources>
+	                   
+	                    <inputs>
+                		<input name="bam_processed">${BamDirectory}/${Test}.bam</input>
+	                    </inputs>
+	
+	                    <outputs>
+	                        <output name="CrossCorResults">${WorkingDirectory}/Coverage/${Test}_CrossCor.txt</output>
+	                    </outputs>
+
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}/Coverage/</arg>
+           <arg name="genomeName">${genomeName}</arg>
+    	</arguments> 
+
+
+	</task>
+
+  -->                            
  
 	        <task name="BigWigProcess" type="BigWigProcess">
 	        <depends>
@@ -109,22 +192,31 @@
 	     </subtasks>
       </specialisationSet>
 
+  <!--
+        <task name="AvCovGenesPlotProcess" type="AvCovGenesPlotProcess">
+	        <depends>
+		     <task>WigCaller</task>
+	   	</depends>
+	                    <resources>
+	                        <memory>8G</memory>
+	                    </resources>
+	                   
+	                    <inputs>
+                		<input name="bam_processed">${genomeFile}</input>
+	                    </inputs>
+	
+	                    <outputs>
+	                        <output name="AveCovPlot">${WorkingDirectory}/Coverage/AverageTSSPlot.png</output>
+	                    </outputs>
 
-	<task name="OrganiseCoverageStats" type="OrganiseCoverageStats">
-     	<depends>
-		<task>WigCaller</task>
-   	</depends>  
-  
-	<outputs>
-       	 <output name="CovPlot">${WorkingDirectory}/Coverage/TempPlot.png</output>
-    	</outputs>
-  	  	<arguments>
-		<arg name="TheCovDirectory">${WorkingDirectory}/Coverage/</arg>
-    		</arguments> 
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+           <arg name="genomeName">${genomeName}</arg>
+    	</arguments> 
 
-            
+
 	</task>
-
+-->
     </tasks>
 </pipe:pipeline>
 

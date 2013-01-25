@@ -8,9 +8,9 @@
 
     <program type="commandLine">
         <executable>
-	java -Xmx8g -jar /lustre/mib-cri/carrol09/Picard/MarkDuplicates.jar INPUT=${TheDirectory}/bamFiles/${OutputName}_TMP.bam ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${OutputName}.bwa.bam METRICS_FILE=${TheDirectory}/bamFiles/${OutputName}.metrics VALIDATION_STRINGENCY=SILENT
+	java -Xmx8g -jar /lustre/mib-cri/carrol09/Picard/MarkDuplicates.jar INPUT=${MergedFile} ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${OutputName}.bwa.bam METRICS_FILE=${TheDirectory}/bamFiles/${OutputName}.metrics VALIDATION_STRINGENCY=SILENT
 	rm ${TheDirectory}/bamFiles/${OutputName}.metrics
-	rm ${TheDirectory}/bamFiles/${OutputName}_TMP.bam
+	rm ${MergedFile}
 	</executable>
     </program>
 	<inputs>

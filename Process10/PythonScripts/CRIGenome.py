@@ -50,6 +50,8 @@ def GetGenome(BamFile):
 	for comments in TempComments:
 		if comments.split(":")[0] == "GenomeVersion":
 			genome = comments.split(":")[1]
+		if comments.split(":")[0] == "Genome":
+			genome = comments.split(":")[1]
 	return(genome)
 
 def GetDirGetName(BamFile):

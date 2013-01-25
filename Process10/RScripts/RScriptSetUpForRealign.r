@@ -45,7 +45,7 @@ write.table(Tommy,file=file.path(LocationsDir,"GetGenome.xml"),qmethod="escape",
 
 
 cat("Submitting jobs!............")
-system(paste("java -jar /home/mib-cri/svn_checkouts/workflow/1.2/uberjar/target/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(LocationsDir,"GetGenome.xml"),sep=""),wait=TRUE,intern=FALSE)
+system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(LocationsDir,"GetGenome.xml"),sep=""),wait=TRUE,intern=FALSE)
 cat("Jobs Submitted!\n")
 files <- dir(path=BamDir,pattern="*.info",full.names = T)
 print(files)
@@ -62,7 +62,9 @@ write.table(cbind(paste(fileNames,".bam",sep=""),Genomes),file.path(WkgDir,"bamF
 
 
 GenomesToAlign <- GenomeMat[!tolower(GenomeMat[,2]) %in% tolower(GENOME_PARAMETER),1]
-
+if(file.exists(file.path(LocationsDir,"SLXToAlign.txt"))){
+	unlink(file.path(LocationsDir,"SLXToAlign.txt"))
+}
 if(length(GenomesToAlign) > 0){
 SLXToAlign <- vector("character",length=length(GenomesToAlign))
 for(i in 1:length(GenomesToAlign)){

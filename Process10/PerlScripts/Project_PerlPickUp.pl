@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 
-$ENV{'PERL5LIB'} = '/home/mib-cri/svn_checkouts/solexa/solexa-limsapi/modules/:/home/mib-cri/svn_checkouts/solexa/core-utils/modules/:/home/mib-cri/svn_checkouts/cri-lims/cri-lims-business/perl-soap-clients/:$PERL5LIB';
+$ENV{'PERL5LIB'} = '/home/mib-cri/svn_checkouts/solexa/solexa-limsapi/modules/:/home/mib-cri/svn_checkouts/solexa/core-utils/modules/:/home/mib-cri/svn_checkouts/cri-lims/perl-soap-clientPERL5LIB';
 
 
 use strict;
@@ -45,7 +45,7 @@ chomp($line);
 my $lanes = $exportService->call('getLanesFromAnnotation','Project',$line);
 foreach my $lane (@$lanes) {
 		#print $lane;
-                my $locations = $exportService->call('getFileLocations', $lane->{'sampleProcess_id'}, 'FILE', 'BAM');
+                my $locations = $exportService->call('getFileLocations', $lane->{'sampleProcess_id'}, 'HTTP', 'BAM');
 		foreach my $location (@$locations) {
                                 printHash($location);
                 }

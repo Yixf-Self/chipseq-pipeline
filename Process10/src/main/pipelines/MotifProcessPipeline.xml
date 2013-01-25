@@ -11,14 +11,42 @@
 	<specialisationSet name="MotifCaller" type="MotifCaller" variable="trio">
 
 	<subtasks> 
-       
-	 <task name="GetSeqProcess" type="GetSeqProcess">
+     	 <task name="GetTopPeaksProcess" type="GetTopPeaksProcess">
+
+
         <resources>
-            <memory>4G</memory>
+            <memory>2G</memory>
         </resources>
             <inputs>
                 <input name="PeakFile">${PeakFileLocation}</input>
-                <input name="Fasta" >${FastaLocation}</input>
+                <input name="Fasta" >${Fasta}</input>
+            </inputs>
+
+            <outputs>
+                <output name="OutFile"  deleteOnFailure="false">${WorkingDirectory}/Motif/${Test}/Top${NPeaks}${Test}.bed</output>		
+            </outputs>
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	    <arg name="RankColumn">5</arg>
+    	    <arg name="RankOrder">Rank</arg>
+    	    <arg name="NPeaks">10000</arg>
+    	    <arg name="Test">${Test}</arg>
+	   <arg name="SamplePeakDir"></arg>
+    	</arguments> 
+         </task>
+  
+
+
+	 <task name="GetSeqProcess" type="GetSeqProcess">
+  	<depends>
+	     <task>GetTopPeaksProcess</task>
+   	</depends>   
+        <resources>
+            <memory>8G</memory>
+        </resources>
+            <inputs>
+                <input name="PeakFile">${WorkingDirectory}/Motif/${Test}/Top${NPeaks}${Test}.bed</input>
+                <input name="Fasta" >${Fasta}</input>
             </inputs>
 
             <outputs>
@@ -32,13 +60,13 @@
 
 
 
-	 <task name="AmeProcess" type="AmeProcess">
+	 <task name="MemeChipProcess" type="MemeChipProcess">
    	<depends>
 	     <task>GetSeqProcess</task>
    	</depends>             
         
         <resources>
-            <memory>8G</memory>
+            <memory>12G</memory>
         </resources>
             <inputs>
                 <input name="Sequences">${WorkingDirectory}/Motif/${Test}/SeqUnderPeaks.fa</input>
@@ -46,7 +74,7 @@
             </inputs>
 
             <outputs>
-                <output name="Ame_Res"  deleteOnFailure="false">${WorkingDirectory}/Motif/${Test}/ame.txt</output>
+                <output name="MemeChip_Res"  deleteOnFailure="false">${WorkingDirectory}/Motif/${Test}/Denovo/index.html</output>
             </outputs>
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
@@ -55,9 +83,30 @@
          </task>
 
 
+	 <task name="AmeProcess" type="AmeProcess">
+   	<depends>
+	     <task>GetSeqProcess</task>
+   	</depends>             
+        
+        <resources>
+            <memory>12G</memory>
+        </resources>
+            <inputs>
+                <input name="Sequences">${WorkingDirectory}/Motif/${Test}/SeqUnderPeaks.fa</input>
+                <input name="MotifDatabase">${MotifDatabaseLocation}</input>                
+            </inputs>
+
+            <outputs>
+                <output name="Ame_Res"  deleteOnFailure="false">${WorkingDirectory}/Motif/${Test}/Known/ame.txt</output>
+            </outputs>
+	<arguments>
+    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	    <arg name="Test">${Test}</arg>    	    
+    	</arguments> 
+         </task>
+
 	     </subtasks>
       </specialisationSet>
-
 
     </tasks>
 </pipe:pipeline>

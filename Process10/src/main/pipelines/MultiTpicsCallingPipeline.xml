@@ -17,7 +17,7 @@
 
 	<task name="TPICsPeakCaller" type="TPICsPeakCaller">
         <resources>
-            <memory>4G</memory>
+            <memory>8G</memory>
         </resources>
 
             <outputs>

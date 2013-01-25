@@ -3,6 +3,7 @@ getRandString<-function(len=12) return(paste(sample(c(rep(0:9,each=5),LETTERS,le
 Args <- commandArgs(trailingOnly = TRUE)
 library(raster)
 ConfigFile <- readIniFile(file.path(Args[2],"config.ini"))
+ConfigFile <- readIniFile(file.path(getwd(),"Temp","config.ini"))
 LocationsDir <- ConfigFile[ConfigFile[,2] %in% "tempdirectory",3]
 WkgDir<- ConfigFile[ConfigFile[,2] %in% "workingdirectory",3]
 BamDir<- ConfigFile[ConfigFile[,2] %in% "bamdirectory",3]
@@ -11,14 +12,17 @@ FQDir<- ConfigFile[ConfigFile[,2] %in% "fastqdirectory",3]
 
 sampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",")
 UniquedMergedFiles <-  as.vector(unique(na.omit(sampleSheet[,"toMerge"])))
+AllSamplesPresent <- as.vector(unique(na.omit(sampleSheet[,"GenomicsID"])))
+UniquedMergedFiles <- UniquedMergedFiles[!UniquedMergedFiles %in% AllSamplesPresent]
 if(length(UniquedMergedFiles) != 0){
   InputLists <- vector("character",length=length(UniquedMergedFiles))
   OutputNames <- UniquedMergedFiles
   for(i in 1:length(UniquedMergedFiles)){
       ToBeMerged <-  as.vector(sampleSheet[sampleSheet[,"toMerge"] %in% UniquedMergedFiles[i],"bamFileName"])
+	ToBeMerged <- ToBeMerged[!is.na(ToBeMerged)]
       InputLists[i] <- paste(paste("INPUT=",file.path(BamDir,ToBeMerged),sep=""),collapse=" ")
   }
-
+UniquedMergedFiles <- UniquedMergedFiles[!gsub("INPUT=","",InputLists) == ""]
 TempFull <- read.delim("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/MergeMeta.xml",header=F,stringsAsFactors=F,quote="")
 TempFull[grep("WorkingDirectory_ToChange",TempFull[,1]),1] <- gsub("WorkingDirectory_ToChange",WkgDir,TempFull[grep("WorkingDirectory_ToChange",TempFull[,1]),1])
 SpecialisationSet <- TempFull[grep("specialisation identifier",TempFull[,1]):max(grep("specialisation>",TempFull[,1])),1]
@@ -43,6 +47,7 @@ colnames(NewSampleSheet) <- colnames(sampleSheet)
 NewSampleSheet <- as.matrix(rbind(sampleSheet,NewSampleSheet))
 	for(i in 1:length(OutputNames)){
 		NewSampleSheet[nrow(sampleSheet)+i,"GenomicsID"] <- OutputNames[i]
+		NewSampleSheet[nrow(sampleSheet)+i,"SampleName"] <- OutputNames[i]
 		NewSampleSheet[nrow(sampleSheet)+i,"bamFileName"] <- paste(OutputNames[i],".bwa.bam",sep="")
 	}
 write.table(NewSampleSheet,"SampleSheet.csv",sep=",",row.names=F,quote=F)

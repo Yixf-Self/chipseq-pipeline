@@ -1,0 +1,1196 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<!DOCTYPE spamo[
+<!ELEMENT spamo (model, files, primary_motif, run_time)>
+<!ATTLIST spamo version CDATA #REQUIRED release CDATA #REQUIRED>
+<!ELEMENT model (command_line, seed, margin, bin_size,
+  bin_pvalue_calc_range, bin_pvalue_cutoff, seq_max_shared_fract,
+  seq_min_hit_score, redundant_overlap, redundant_joint,
+  motif_pseudocount, motif_trim, bin_max, host, when)>
+<!ELEMENT command_line (#PCDATA)>
+<!ELEMENT seed (#PCDATA)>
+<!ELEMENT margin (#PCDATA)>
+<!ELEMENT bin_size (#PCDATA)>
+<!ELEMENT bin_pvalue_calc_range (#PCDATA)>
+<!ELEMENT bin_pvalue_cutoff (#PCDATA)>
+<!ELEMENT seq_max_shared_fract (#PCDATA)>
+<!ELEMENT seq_min_hit_score (#PCDATA)>
+<!ELEMENT redundant_overlap (#PCDATA)>
+<!ELEMENT redundant_joint (#PCDATA)>
+<!ELEMENT motif_pseudocount (#PCDATA)>
+<!ELEMENT motif_trim (#PCDATA)>
+<!ELEMENT bin_max (#PCDATA)>
+<!ELEMENT host (#PCDATA)>
+<!ELEMENT when (#PCDATA)>
+<!ELEMENT files (sequence_db, motif_db+)>
+<!ELEMENT sequence_db EMPTY>
+<!ATTLIST sequence_db name CDATA #REQUIRED loaded CDATA #REQUIRED
+  excluded_too_short CDATA #REQUIRED excluded_no_match CDATA #REQUIRED
+  excluded_similar CDATA #REQUIRED last_modified CDATA #REQUIRED
+  source CDATA #REQUIRED>
+<!ELEMENT motif_db EMPTY>
+<!ATTLIST motif_db id ID #REQUIRED name CDATA #REQUIRED
+  loaded CDATA #REQUIRED excluded CDATA #REQUIRED
+  last_modified CDATA #REQUIRED source CDATA #REQUIRED
+  cisml CDATA #IMPLIED>
+<!ELEMENT primary_motif (motif, secondary_motif*)>
+<!ELEMENT secondary_motif (spacing+, motif, histogram, redundant?)>
+<!ATTLIST secondary_motif evalue CDATA #REQUIRED>
+<!ELEMENT spacing EMPTY>
+<!ATTLIST spacing strand (same|opposite) #REQUIRED
+  side (left|right) #REQUIRED bin CDATA #REQUIRED num CDATA #REQUIRED
+  pvalue CDATA #REQUIRED>
+<!ELEMENT histogram (same_strand, opposite_strand)>
+<!ATTLIST histogram total CDATA #REQUIRED max CDATA #REQUIRED>
+<!ELEMENT same_strand (left_side, right_side)>
+<!ELEMENT opposite_strand (left_side, right_side)>
+<!ELEMENT left_side (bin+)>
+<!ELEMENT right_side (bin+)>
+<!ELEMENT bin EMPTY>
+<!-- i: index, n: number in bin, p: pvalue (only supplied when bin
+  is tested) -->
+<!ATTLIST bin i CDATA #REQUIRED n CDATA #REQUIRED p CDATA #IMPLIED>
+<!ELEMENT redundant (secondary_motif+)>
+<!-- motif contains the probability of each of the nucleotide bases at each
+  position; i starts at 1; A, C, G and T are probabilities that sum to 1 -->
+<!ELEMENT motif (pos+)>
+<!ATTLIST motif db IDREF #REQUIRED name CDATA #REQUIRED alt CDATA #IMPLIED 
+  length CDATA #REQUIRED nsites CDATA #IMPLIED evalue CDATA #IMPLIED
+  ltrim CDATA #IMPLIED rtrim CDATA #IMPLIED url CDATA #IMPLIED>
+<!ELEMENT pos EMPTY>
+<!ATTLIST pos i CDATA #REQUIRED A CDATA #REQUIRED C CDATA #REQUIRED
+  G CDATA #REQUIRED T CDATA #REQUIRED>
+<!-- run time is measured in real time and cpu time -->
+<!ELEMENT run_time EMPTY>
+<!ATTLIST run_time cpu CDATA #REQUIRED real CDATA #REQUIRED>
+]>
+<spamo version="4.8.1" release="Tue Feb  7 14:03:40 EST 2012">
+  <model>
+    <command_line>spamo  -verbosity 1 -oc /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/Denovo/meme_spamo_out /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/SeqUnderPeaks.fa /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/Denovo/meme_out/meme.txt /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/Denovo/meme_out/meme.txt</command_line>
+    <seed>1</seed>
+    <margin>150</margin>
+    <bin_size>1</bin_size>
+    <bin_pvalue_calc_range>150</bin_pvalue_calc_range>
+    <bin_pvalue_cutoff>0.05</bin_pvalue_cutoff>
+    <motif_evalue_cutoff>10</motif_evalue_cutoff>
+    <seq_max_shared_fract>0.5</seq_max_shared_fract>
+    <seq_min_hit_score>7</seq_min_hit_score>
+    <redundant_overlap>2</redundant_overlap>
+    <redundant_joint>0.5</redundant_joint>
+    <motif_pseudocount>0.1</motif_pseudocount>
+    <motif_trim>0.25</motif_trim>
+    <bin_max>0</bin_max>
+    <host>crinode115</host>
+    <when>Tue Nov 27 18:06:18 2012</when>
+  </model>
+  <files>
+    <sequence_db name="SeqUnderPeaks" loaded="500" excluded_too_short="500"
+        excluded_no_match="0" excluded_similar="0" last_modified="Tue Nov 27 17:45:09 2012"
+        source="/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/SeqUnderPeaks.fa"/>
+    <motif_db id="primary_file" name="meme.txt" loaded="3" excluded="2" last_modified="Tue Nov 27 18:03:57 2012"
+        source="/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/Denovo/meme_out/meme.txt"/>
+    <motif_db id="db1" name="meme.txt" loaded="3" excluded="1" last_modified="Tue Nov 27 18:03:57 2012"
+        source="/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/20121114_MontoyaAR_DN_Hes6ChIP/Peaks/Macs/Motif/MCF7/Denovo/meme_out/meme.txt"/>
+  </files>
+  <primary_motif>
+    <motif db="primary_file" name="1" length="30" nsites="13" evalue="1.5e-59" ltrim="0" rtrim="0" >
+      <pos i="1" A="0.0020345" C="0.612465" G="0.383442" T="0.00205885"/>
+      <pos i="2" A="0.0020345" C="0.383456" G="0.00176298" T="0.612746"/>
+      <pos i="3" A="0.460049" C="0.00177725" G="0.536115" T="0.00205885"/>
+      <pos i="4" A="0.0783703" C="0.00177725" G="0.765122" T="0.15473"/>
+      <pos i="5" A="0.0020345" C="0.459792" G="0.00176298" T="0.53641"/>
+      <pos i="6" A="0.0020345" C="0.994144" G="0.00176298" T="0.00205885"/>
+      <pos i="7" A="0.0020345" C="0.00177725" G="0.00176298" T="0.994425"/>
+      <pos i="8" A="0.0020345" C="0.459792" G="0.0780988" T="0.460074"/>
+      <pos i="9" A="0.154706" C="0.00177725" G="0.765122" T="0.0783947"/>
+      <pos i="10" A="0.994401" C="0.00177725" G="0.00176298" T="0.00205885"/>
+      <pos i="11" A="0.612722" C="0.383456" G="0.00176298" T="0.00205885"/>
+      <pos i="12" A="0.0020345" C="0.994144" G="0.00176298" T="0.00205885"/>
+      <pos i="13" A="0.0020345" C="0.0781131" G="0.00176298" T="0.918089"/>
+      <pos i="14" A="0.0783703" C="0.917808" G="0.00176298" T="0.00205885"/>
+      <pos i="15" A="0.0020345" C="0.994144" G="0.00176298" T="0.00205885"/>
+      <pos i="16" A="0.0020345" C="0.0781131" G="0.00176298" T="0.918089"/>
+      <pos i="17" A="0.0020345" C="0.0781131" G="0.917794" T="0.00205885"/>
+      <pos i="18" A="0.536386" C="0.0781131" G="0.383442" T="0.00205885"/>
+      <pos i="19" A="0.0020345" C="0.230785" G="0.765122" T="0.00205885"/>
+      <pos i="20" A="0.0020345" C="0.765136" G="0.0780988" T="0.15473"/>
+      <pos i="21" A="0.0020345" C="0.00177725" G="0.00176298" T="0.994425"/>
+      <pos i="22" A="0.0020345" C="0.841472" G="0.00176298" T="0.15473"/>
+      <pos i="23" A="0.994401" C="0.00177725" G="0.00176298" T="0.00205885"/>
+      <pos i="24" A="0.765394" C="0.00177725" G="0.23077" T="0.00205885"/>
+      <pos i="25" A="0.0783703" C="0.00177725" G="0.917794" T="0.00205885"/>
+      <pos i="26" A="0.0020345" C="0.536129" G="0.00176298" T="0.460074"/>
+      <pos i="27" A="0.154706" C="0.0781131" G="0.765122" T="0.00205885"/>
+      <pos i="28" A="0.994401" C="0.00177725" G="0.00176298" T="0.00205885"/>
+      <pos i="29" A="0.0020345" C="0.00177725" G="0.00176298" T="0.994425"/>
+      <pos i="30" A="0.0020345" C="0.917808" G="0.00176298" T="0.0783947"/>
+    </motif>
+    <secondary_motif evalue="2">
+            <motif db="db1" name="2" length="30" nsites="13" evalue="3e-59" ltrim="0" rtrim="0" >
+        <pos i="1" A="0.0020345" C="0.841472" G="0.00176298" T="0.15473"/>
+        <pos i="2" A="0.841729" C="0.00177725" G="0.154435" T="0.00205885"/>
+        <pos i="3" A="0.0020345" C="0.30712" G="0.0780988" T="0.612746"/>
+        <pos i="4" A="0.307378" C="0.00177725" G="0.688786" T="0.00205885"/>
+        <pos i="5" A="0.0020345" C="0.841472" G="0.00176298" T="0.15473"/>
+        <pos i="6" A="0.0020345" C="0.917808" G="0.00176298" T="0.0783947"/>
+        <pos i="7" A="0.0020345" C="0.0781131" G="0.00176298" T="0.918089"/>
+        <pos i="8" A="0.0783703" C="0.00177725" G="0.917794" T="0.00205885"/>
+        <pos i="9" A="0.0020345" C="0.00177725" G="0.00176298" T="0.994425"/>
+        <pos i="10" A="0.918065" C="0.00177725" G="0.0780988" T="0.00205885"/>
+        <pos i="11" A="0.689058" C="0.00177725" G="0.307106" T="0.00205885"/>
+        <pos i="12" A="0.0020345" C="0.154449" G="0.0780988" T="0.765418"/>
+        <pos i="13" A="0.0020345" C="0.841472" G="0.00176298" T="0.15473"/>
+        <pos i="14" A="0.0783703" C="0.6888" G="0.0780988" T="0.15473"/>
+        <pos i="15" A="0.0020345" C="0.917808" G="0.00176298" T="0.0783947"/>
+        <pos i="16" A="0.994401" C="0.00177725" G="0.00176298" T="0.00205885"/>
+        <pos i="17" A="0.0783703" C="0.00177725" G="0.917794" T="0.00205885"/>
+        <pos i="18" A="0.0020345" C="0.917808" G="0.00176298" T="0.0783947"/>
+        <pos i="19" A="0.460049" C="0.00177725" G="0.00176298" T="0.53641"/>
+        <pos i="20" A="0.383714" C="0.383456" G="0.154435" T="0.0783947"/>
+        <pos i="21" A="0.0020345" C="0.459792" G="0.00176298" T="0.53641"/>
+        <pos i="22" A="0.0020345" C="0.00177725" G="0.0780988" T="0.918089"/>
+        <pos i="23" A="0.0020345" C="0.30712" G="0.00176298" T="0.689082"/>
+        <pos i="24" A="0.383714" C="0.00177725" G="0.536115" T="0.0783947"/>
+        <pos i="25" A="0.0020345" C="0.00177725" G="0.994129" T="0.00205885"/>
+        <pos i="26" A="0.0783703" C="0.00177725" G="0.917794" T="0.00205885"/>
+        <pos i="27" A="0.994401" C="0.00177725" G="0.00176298" T="0.00205885"/>
+        <pos i="28" A="0.0020345" C="0.00177725" G="0.994129" T="0.00205885"/>
+        <pos i="29" A="0.0020345" C="0.00177725" G="0.994129" T="0.00205885"/>
+        <pos i="30" A="0.0020345" C="0.994144" G="0.00176298" T="0.00205885"/>
+      </motif>
+      <histogram total="0" max="0">
+        <same_strand>
+          <left_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+          </left_side>
+          <right_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+          </right_side>
+        </same_strand>
+        <opposite_strand>
+          <left_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+          </left_side>
+          <right_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+          </right_side>
+        </opposite_strand>
+      </histogram>
+    </secondary_motif>
+    <secondary_motif evalue="2">
+            <motif db="db1" name="3" length="29" nsites="12" evalue="2.4e-34" ltrim="0" rtrim="0" >
+        <pos i="1" A="0.332781" C="0.00192413" G="0.00190868" T="0.663386"/>
+        <pos i="2" A="0.00220264" C="0.00192413" G="0.084553" T="0.91132"/>
+        <pos i="3" A="0.00220264" C="0.167214" G="0.00190868" T="0.828675"/>
+        <pos i="4" A="0.00220264" C="0.249858" G="0.00190868" T="0.746031"/>
+        <pos i="5" A="0.00220264" C="0.0845684" G="0.084553" T="0.828675"/>
+        <pos i="6" A="0.0848469" C="0.00192413" G="0.332487" T="0.580741"/>
+        <pos i="7" A="0.00220264" C="0.00192413" G="0.00190868" T="0.993965"/>
+        <pos i="8" A="0.250137" C="0.00192413" G="0.00190868" T="0.746031"/>
+        <pos i="9" A="0.00220264" C="0.00192413" G="0.167198" T="0.828675"/>
+        <pos i="10" A="0.00220264" C="0.00192413" G="0.00190868" T="0.993965"/>
+        <pos i="11" A="0.0848469" C="0.00192413" G="0.00190868" T="0.91132"/>
+        <pos i="12" A="0.00220264" C="0.00192413" G="0.167198" T="0.828675"/>
+        <pos i="13" A="0.00220264" C="0.0845684" G="0.00190868" T="0.91132"/>
+        <pos i="14" A="0.167492" C="0.00192413" G="0.084553" T="0.746031"/>
+        <pos i="15" A="0.00220264" C="0.00192413" G="0.332487" T="0.663386"/>
+        <pos i="16" A="0.167492" C="0.00192413" G="0.084553" T="0.746031"/>
+        <pos i="17" A="0.66336" C="0.00192413" G="0.00190868" T="0.332807"/>
+        <pos i="18" A="0.250137" C="0.00192413" G="0.74571" T="0.00222901"/>
+        <pos i="19" A="0.828649" C="0.0845684" G="0.00190868" T="0.0848733"/>
+        <pos i="20" A="0.0848469" C="0.00192413" G="0.911" T="0.00222901"/>
+        <pos i="21" A="0.911294" C="0.00192413" G="0.00190868" T="0.0848733"/>
+        <pos i="22" A="0.0848469" C="0.663081" G="0.00190868" T="0.250163"/>
+        <pos i="23" A="0.580715" C="0.00192413" G="0.415132" T="0.00222901"/>
+        <pos i="24" A="0.00220264" C="0.00192413" G="0.993644" T="0.00222901"/>
+        <pos i="25" A="0.49807" C="0.00192413" G="0.497776" T="0.00222901"/>
+        <pos i="26" A="0.0848469" C="0.00192413" G="0.911" T="0.00222901"/>
+        <pos i="27" A="0.00220264" C="0.00192413" G="0.00190868" T="0.993965"/>
+        <pos i="28" A="0.00220264" C="0.663081" G="0.00190868" T="0.332807"/>
+        <pos i="29" A="0.00220264" C="0.00192413" G="0.00190868" T="0.993965"/>
+      </motif>
+      <histogram total="0" max="0">
+        <same_strand>
+          <left_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+            <bin i="122" n="0" p="1"/>
+          </left_side>
+          <right_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+            <bin i="122" n="0" p="1"/>
+          </right_side>
+        </same_strand>
+        <opposite_strand>
+          <left_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+            <bin i="122" n="0" p="1"/>
+          </left_side>
+          <right_side>
+            <bin i="1" n="0" p="1"/>
+            <bin i="2" n="0" p="1"/>
+            <bin i="3" n="0" p="1"/>
+            <bin i="4" n="0" p="1"/>
+            <bin i="5" n="0" p="1"/>
+            <bin i="6" n="0" p="1"/>
+            <bin i="7" n="0" p="1"/>
+            <bin i="8" n="0" p="1"/>
+            <bin i="9" n="0" p="1"/>
+            <bin i="10" n="0" p="1"/>
+            <bin i="11" n="0" p="1"/>
+            <bin i="12" n="0" p="1"/>
+            <bin i="13" n="0" p="1"/>
+            <bin i="14" n="0" p="1"/>
+            <bin i="15" n="0" p="1"/>
+            <bin i="16" n="0" p="1"/>
+            <bin i="17" n="0" p="1"/>
+            <bin i="18" n="0" p="1"/>
+            <bin i="19" n="0" p="1"/>
+            <bin i="20" n="0" p="1"/>
+            <bin i="21" n="0" p="1"/>
+            <bin i="22" n="0" p="1"/>
+            <bin i="23" n="0" p="1"/>
+            <bin i="24" n="0" p="1"/>
+            <bin i="25" n="0" p="1"/>
+            <bin i="26" n="0" p="1"/>
+            <bin i="27" n="0" p="1"/>
+            <bin i="28" n="0" p="1"/>
+            <bin i="29" n="0" p="1"/>
+            <bin i="30" n="0" p="1"/>
+            <bin i="31" n="0" p="1"/>
+            <bin i="32" n="0" p="1"/>
+            <bin i="33" n="0" p="1"/>
+            <bin i="34" n="0" p="1"/>
+            <bin i="35" n="0" p="1"/>
+            <bin i="36" n="0" p="1"/>
+            <bin i="37" n="0" p="1"/>
+            <bin i="38" n="0" p="1"/>
+            <bin i="39" n="0" p="1"/>
+            <bin i="40" n="0" p="1"/>
+            <bin i="41" n="0" p="1"/>
+            <bin i="42" n="0" p="1"/>
+            <bin i="43" n="0" p="1"/>
+            <bin i="44" n="0" p="1"/>
+            <bin i="45" n="0" p="1"/>
+            <bin i="46" n="0" p="1"/>
+            <bin i="47" n="0" p="1"/>
+            <bin i="48" n="0" p="1"/>
+            <bin i="49" n="0" p="1"/>
+            <bin i="50" n="0" p="1"/>
+            <bin i="51" n="0" p="1"/>
+            <bin i="52" n="0" p="1"/>
+            <bin i="53" n="0" p="1"/>
+            <bin i="54" n="0" p="1"/>
+            <bin i="55" n="0" p="1"/>
+            <bin i="56" n="0" p="1"/>
+            <bin i="57" n="0" p="1"/>
+            <bin i="58" n="0" p="1"/>
+            <bin i="59" n="0" p="1"/>
+            <bin i="60" n="0" p="1"/>
+            <bin i="61" n="0" p="1"/>
+            <bin i="62" n="0" p="1"/>
+            <bin i="63" n="0" p="1"/>
+            <bin i="64" n="0" p="1"/>
+            <bin i="65" n="0" p="1"/>
+            <bin i="66" n="0" p="1"/>
+            <bin i="67" n="0" p="1"/>
+            <bin i="68" n="0" p="1"/>
+            <bin i="69" n="0" p="1"/>
+            <bin i="70" n="0" p="1"/>
+            <bin i="71" n="0" p="1"/>
+            <bin i="72" n="0" p="1"/>
+            <bin i="73" n="0" p="1"/>
+            <bin i="74" n="0" p="1"/>
+            <bin i="75" n="0" p="1"/>
+            <bin i="76" n="0" p="1"/>
+            <bin i="77" n="0" p="1"/>
+            <bin i="78" n="0" p="1"/>
+            <bin i="79" n="0" p="1"/>
+            <bin i="80" n="0" p="1"/>
+            <bin i="81" n="0" p="1"/>
+            <bin i="82" n="0" p="1"/>
+            <bin i="83" n="0" p="1"/>
+            <bin i="84" n="0" p="1"/>
+            <bin i="85" n="0" p="1"/>
+            <bin i="86" n="0" p="1"/>
+            <bin i="87" n="0" p="1"/>
+            <bin i="88" n="0" p="1"/>
+            <bin i="89" n="0" p="1"/>
+            <bin i="90" n="0" p="1"/>
+            <bin i="91" n="0" p="1"/>
+            <bin i="92" n="0" p="1"/>
+            <bin i="93" n="0" p="1"/>
+            <bin i="94" n="0" p="1"/>
+            <bin i="95" n="0" p="1"/>
+            <bin i="96" n="0" p="1"/>
+            <bin i="97" n="0" p="1"/>
+            <bin i="98" n="0" p="1"/>
+            <bin i="99" n="0" p="1"/>
+            <bin i="100" n="0" p="1"/>
+            <bin i="101" n="0" p="1"/>
+            <bin i="102" n="0" p="1"/>
+            <bin i="103" n="0" p="1"/>
+            <bin i="104" n="0" p="1"/>
+            <bin i="105" n="0" p="1"/>
+            <bin i="106" n="0" p="1"/>
+            <bin i="107" n="0" p="1"/>
+            <bin i="108" n="0" p="1"/>
+            <bin i="109" n="0" p="1"/>
+            <bin i="110" n="0" p="1"/>
+            <bin i="111" n="0" p="1"/>
+            <bin i="112" n="0" p="1"/>
+            <bin i="113" n="0" p="1"/>
+            <bin i="114" n="0" p="1"/>
+            <bin i="115" n="0" p="1"/>
+            <bin i="116" n="0" p="1"/>
+            <bin i="117" n="0" p="1"/>
+            <bin i="118" n="0" p="1"/>
+            <bin i="119" n="0" p="1"/>
+            <bin i="120" n="0" p="1"/>
+            <bin i="121" n="0" p="1"/>
+            <bin i="122" n="0" p="1"/>
+          </right_side>
+        </opposite_strand>
+      </histogram>
+    </secondary_motif>
+  </primary_motif>
+  <run_time cpu="0.0" real="0.0"/>
+</spamo>

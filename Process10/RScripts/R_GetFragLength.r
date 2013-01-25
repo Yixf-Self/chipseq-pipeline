@@ -22,10 +22,10 @@ names(Temp2) <- c("+","-")
 
 
 
-fraglenSissr <- median(estimate.mean.fraglen(GrangesAlign))
+fraglenSissr <- median(estimate.mean.fraglen(GrangesAlign2))
 #fraglenCorr <- median(estimate.mean.fraglen(GrangesAlign,method="correlation"))
 fraglenCorr <- NA
-fraglenCov <- median(estimate.mean.fraglen(GrangesAlign,method="coverage"))
+fraglenCov <- median(estimate.mean.fraglen(GrangesAlign2,method="coverage"))
 
 CovPlot <- basesCovered(Temp2, shift = seq(0, 300, 5),seqLen=36)
 

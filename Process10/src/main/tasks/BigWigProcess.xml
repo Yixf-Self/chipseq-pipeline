@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Coverage
-	/lustre/mib-cri/carrol09/MyPipe/bedToBigBed ${Wig} ${genome} ${BigBed}
+	/lustre/mib-cri/carrol09/MyPipe/BigWig/bedGraphToBigWig ${Wig} ${genome} ${BigBed}
 	</executable>
     </program>
 

@@ -31,21 +31,25 @@ for range in bed:
 	coords = re.split("\t",ChompRange)
 	newSetTemp = []
 	newSetTemp.append(coords[0])
-	newSetTemp.append(float(coords[1])-50)
-	newSetTemp.append(float(coords[2])+50)
+	newSetTemp.append((float(coords[1])+float(coords[2]))/2-100)
+	newSetTemp.append((float(coords[1])+float(coords[2]))/2+100)
 	newSetTemp.append(coords[3])	
 	bedList.append(newSetTemp)
 
 bed.close()
 
 K= 0
+Missed = 0
 for region in bedList:
 	K=K+1
-	print(str(region[0]),int(region[1]),int(region[2]))
+	#print(str(region[0]),int(region[1]),int(region[2]))
 	Sequence = FastaFile.fetch(str(region[0]),int(region[1]),int(region[2]))
-	print(Sequence)
-	MyFasta.write(">"+region[3]+"\n")
-	MyFasta.write(Sequence+"\n")
+	if len(Sequence) == 200:
+		#print(Sequence)
+		MyFasta.write(">"+region[3]+"\n")
+		MyFasta.write(Sequence+"\n")
+	else:
+		 Missed = Missed+1
 
-
+print("Peaks with no sequence found "+str(Missed)+"\n")
 MyFasta.close()

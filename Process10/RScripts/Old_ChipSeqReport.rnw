@@ -1,0 +1,279 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{/home/mib-cri/local/lib64/R/share/texmf/Sweave}
+
+
+\usepackage{indentfirst}
+
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{times}
+\usepackage{ifthen}
+\SweaveOpts{echo=FALSE,results=hide,include=FALSE}
+
+
+
+<<setUpTitle>>=
+### Enter your name, e-mail and the project title below, or it will try and guess
+### REMEMBER LaTeX does not like underscores _ in text, so escape then e.g. title="10660902\_FarrinerT\_PL\_GFOL"
+#you can also add a .plan file if your finger file does not have your name in
+title = ""
+name = ""
+email = ""
+## If above are empty it will try and guess
+if (nchar(title)==0){
+title <- basename(getwd())
+title <- gsub("_"," ",title)}
+if (nchar(name)==0){
+name <- system("finger $(whoami) |perl -ne 'print \"$1\n\" if m/Name: (.*)/;'",intern=TRUE)}
+name <- name[length(name)]
+if (nchar(email)==0){
+email <- paste(sub(" ",".",name),"@cancer.org.uk",sep="")}
+@
+
+\begin{document}
+\title{\Sexpr{title}}
+\author{\Sexpr{name}\\
+\small{Cancer Resarch UK - Cambridge Research Institute - Bioinformatics Core}\\
+\texttt{\Sexpr{email}}}
+\date{Report Generated \today}
+\maketitle
+
+\section{Table of Contents}
+\tableofcontents
+
+<<loadLibraries>>=
+#Set cairo to be default graphics type for cluster use
+options(bitmapType="cairo")
+library(RColorBrewer)
+library(hwriter)
+library(xtable)
+library(gplots)
+library(WGCNA)
+library(beadarray)  
+library(amap)
+
+
+
+
+# The following setting is important, do not omit. 
+options(stringsAsFactors = FALSE); 
+
+@
+
+<<customFunctions,cache=T>>=
+###Custom Functions
+
+WkgDir <- getwd()
+WkgDir <- "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/"
+ss <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",",stringsAsFactors=F)
+TableOfNum <- ss[,c("GenomicsID","SampleName","Original","delRand","Excluded","Filtered","Unique","DuplicationRate")]
+TableOfNum <- TableOfNum[!TableOfNum[,3] %in% "No_Information_Available" ,]
+TableOfNum[,2] <- gsub("_",".",TableOfNum[,2])
+TableOfNum[,8] <- round(as.numeric(TableOfNum[,8]),1)
+
+BottomDup <-TableOfNum[order(as.numeric(TableOfNum[,8]),decreasing=F),1][1:5]  
+TopDup <-TableOfNum[order(as.numeric(TableOfNum[,8]),decreasing=T),1][1:5]
+Dup<- unique(c(BottomDup,TopDup))
+TableOfNum <- TableOfNum[TableOfNum[,1] %in% Dup,]
+TableToPlot <- TableOfNum
+
+TempMat <- t(data.matrix(TableToPlot[,c("Original","delRand","Excluded","Filtered","Unique")]))
+namesFoPlot <- TableToPlot[,1]
+TempTop <- rbind(TempMat[1,]-TempMat[2,],TempMat[2,]-TempMat[3,],TempMat[3,]-TempMat[4,],TempMat[4,]-TempMat[5,],TempMat[5,])[5:1,]
+
+
+
+#png(file.path(WkgDir,"ReadsPlot.png"),width=1000,height=1000)
+#par(mar=c(5, 10, 4, 2) + 0.1)
+#barplot(TempTop,names=namesFoPlot,horiz=T,las=1,legend.text=c("Pass Filter","Duplicated","MapQ < 15","Excluded Regions","Random_Contigs"),xlim=c(0,1.5*max(TempMat)))
+#dev.off()
+
+
+TempMat <- t(TempTop)
+rownames(TempMat) <- namesFoPlot
+colnames(TempMat) <- rev(c("Original","delRand","Excluded","Filtered","Unique"))
+
+
+ToPlotG <- melt(TempMat)
+colnames(ToPlotG) <- c("SampleID","Filter","Number_of_Reads")
+
+ToPlotG$Filter <- factor(ToPlotG$Filter, levels = rev(c("Original","delRand","Excluded","Filtered","Unique")))
+ToPlotG[,3] <- ToPlotG[,3]/1000000
+NewP <- ggplot(ToPlotG, aes(x=SampleID,y=Number_of_Reads,fill=Filter)) + geom_bar()+coord_flip() 
+ggsave(NewP,filename="ReadsPlot.png")
+
+#TableOfNum[,c("GenomicsID")] <- gsub("\\.*","",TableOfNum[,c("GenomicsID")])
+TableOfNum[,c("Original")] <- paste(round(as.numeric(TableOfNum[,c("Original")])/1000000,2),"M",sep="")
+TableOfNum[,c("delRand")] <- paste(round(as.numeric(TableOfNum[,c("delRand")])/1000000,2),"M",sep="")
+TableOfNum[,c("Excluded")] <- paste(round(as.numeric(TableOfNum[,c("Excluded")])/1000000,2),"M",sep="")
+TableOfNum[,c("Filtered")] <- paste(round(as.numeric(TableOfNum[,c("Filtered")])/1000000,2),"M",sep="")
+TableOfNum[,c("Unique")] <- paste(round(as.numeric(TableOfNum[,c("Unique")])/1000000,2),"M",sep="")
+colnames(TableOfNum) <- c("ID","Name","Total","Random Contigs","Excluded Regions","MapQ Filter","Unique","Duplication")
+TableToPrint <- xtable(TableOfNum,caption="Number of Reads after filtering steps",lab="tab:numReads",centering="L")
+
+
+
+
+
+#if(length(grep("MacsPeaks",colnames(ss)))>0){
+MacsTable <- ss[,c("SampleName","MacsPeaks","Macs_Genes_In_Peaks","Macs_Peaks_In_Genes")]
+MacsTable <- MacsTable[!is.na(MacsTable[,2]),]
+MacsTable[,1] <- gsub("_",".",MacsTable[,1])
+#ToPrintMacs <- matrix(MacsTable[,2],ncol=1)
+#rownames(ToPrintMacs) <- MacsTable[,1]
+TableToPrint2 <- xtable(MacsTable,caption="Summary of sample peaks and gene annotation for peaks")
+#}
+
+#if(length(grep("SicerPeaks",colnames(ss)))>0){
+SicerTable <- ss[,c("SampleName","SicerPeaks")]
+SicerTable <- SicerTable[!is.na(SicerTable[,2]),]
+SicerTable[,1] <- gsub("_",".",SicerTable[,1])
+#ToPrintMacs <- matrix(SicerTable[,2],ncol=1)
+#rownames(ToPrintMacs) <- SicerTable[,1]
+TableToPrint3 <- xtable(SicerTable,caption="Summary of sample peaks and gene annotation for peaks")
+#}
+
+#if(length(grep("TPICSPeaks",colnames(ss)))>0){
+TPICSTable <- ss[,c("SampleName","TPICsPeaks")]
+TPICSTable <- TPICSTable[!is.na(TPICSTable[,2]),]
+TPICSTable[,1] <- gsub("_",".",TPICSTable[,1])
+#ToPrintMacs <- matrix(TPICSTable[,2],ncol=1)
+#rownames(ToPrintMacs) <- TPICSTable[,1]
+TableToPrint4 <- xtable(TPICSTable,caption="Summary of sample peaks and gene annotation for peaks")
+#}
+
+CoverageResults <- dir(path=file.path(WkgDir,"Fragment_Lengths"),pattern="*.FragCovLog",full.names=T)
+CovNames <- gsub("/.*/","",gsub("_Processed.FragCovLog","",CoverageResults ))
+for(i in 1:length(CoverageResults)){
+	if(i == 1){
+		CovFrame <- read.delim(CoverageResults[i],sep=" ",header=F)
+	}
+	if(i > 1){
+		CovFrameTemp <- read.delim(CoverageResults[i],sep=" ",header=F)
+		CovFrame <- merge(CovFrame,CovFrameTemp,by=1,all=T)
+	}
+
+}
+colnames(CovFrame) <- c("Shift_Size",CovNames)
+temp <- melt(as.data.frame(CovFrame),id.vars=c("Shift_Size"))
+#png("CoverageShiftSizes.png",width=1000,height=1000)
+P <- ggplot(temp,aes(x=Shift_Size,y=value,col=variable))+geom_line()+xlim(0,300)+ylab("Proportion of Bases Covered")
+#dev.off()
+Mins <- vector("numeric",length=(ncol(CovFrame)-1))
+for(i in 1:(ncol(CovFrame)-1)){
+	Mins[i] <- CovFrame[which.min(CovFrame[,i+1]),1]
+}
+#P = P+geom_vline(xintercept = Mins,colours=Mins)
+ggsave(P,filename="FragmentLengthPlot.png")
+
+
+
+
+Histfiles <- dir(path=file.path(WkgDir,"Coverage"),pattern="*.hist",full.names=T)
+forPic <- gsub("_Processed.hist","",dir(path=file.path(WkgDir,"Coverage"),pattern="*.hist"))
+for (i in 1:length(Histfiles)){
+  if(i == 1){
+      TempIn <- read.delim(Histfiles[i],sep="\t",header=F)
+      GenomeCov <- TempIn[TempIn[,1] %in% "genome",]
+      ToMerge <- cbind(GenomeCov[,2],log10(GenomeCov[,3]))
+  }
+  if(i > 1){
+      TempIn <- read.delim(Histfiles[i],sep="\t",header=F)
+      GenomeCov <- TempIn[TempIn[,1] %in% "genome",]
+      ToMerge2 <- cbind(GenomeCov[,2],log10(GenomeCov[,3]))
+      ToMerge <- merge(ToMerge,ToMerge2,by=1,all=T)
+  }
+}
+colnames(ToMerge) <- c("Depth",forPic)
+PlottingCov <- melt(as.data.frame(ToMerge),id.vars=c("Depth"))
+P <- ggplot(PlottingCov,aes(x=Depth,y=value,col=variable))+geom_line()+ylab("Log2 Base Pairs")
+ggsave(P,filename="CoveragePlot.png")
+@
+
+<<customFunctions2,cache=T>>=
+###Custom Functions
+
+make_png <- function (file_name){
+#Just a quick function to make pngs, they you can globally set the image size and options
+  png(file_name,width=as.numeric(500),height=as.numeric(500),type = "cairo")
+}
+@ 
+
+
+
+\section{Introduction}
+
+\subsection{Description}
+
+ChIP-sequencing tecnologies combine massively parralell DNA sequencing and chromatin immunoprecipitation to identify protein/DNA interactions and epigenetic states..
+
+
+\noindent
+\vspace{5 mm}
+
+\section{Quality Assessment and Genomic Distributions Of Reads}
+
+\noindent
+This report provides a summary of quality assessment for 
+<<readsTable,results=tex>>==
+print(TableToPrint,include.rownames=F)
+@
+\begin{figure}[h]
+\begin{center}
+\includegraphics[]{ReadsPlot.png}
+\caption{Log2 of Number Base Pairs at Differing Read Depths}
+\label{fig:DepthPlot}
+\end{center}
+\end{figure} 
+
+
+
+\vspace{5 mm}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[]{CoveragePlot.png}
+\caption{Log2 of Number Base Pairs at Differing Read Depths}
+\label{fig:DepthPlot}
+\end{center}
+\end{figure} 
+@
+
+\section{Fragment Lengths and Coverage}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[]{FragmentLengthPlot.png}
+\caption{Plot of proportion of bases covered per sample following consecutive shifts of read positions}
+\label{fig:ShiftSizes}
+\end{center}
+\end{figure} 
+
+@
+\vspace{5 mm}
+\section{Peaks and Enriched Genomic Locations}
+
+\subsection{Macs Peaks}
+\noindent
+<<TPICSTable,results=tex>>==
+print(TableToPrint2,include.rownames=F)
+@
+
+\subsection{Sicer Peaks}
+\noindent
+<<TPICSTable,results=tex>>==
+print(TableToPrint3,include.rownames=F)
+@
+
+\subsection{TPICS Peaks}
+\noindent
+<<tpicsTable,results=tex>>==
+print(TableToPrint4,include.rownames=F)
+@
+
+
+
+
+
+\end{document}

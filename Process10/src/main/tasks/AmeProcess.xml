@@ -8,8 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	mkdir -p ${TheDirectory}/Motifs/${Test}
-	/lustre/mib-cri/carrol09/Work/MyPipe/Motifs/bin/ame -oc ${TheDirectory}/Motif/${Test} ${Sequences} ${MotifDatabase}
+	/lustre/mib-cri/carrol09/Work/MyPipe/Motifs/bin/ame -oc ${TheDirectory}/Motif/${Test}/Known ${Sequences} ${MotifDatabase}
 	</executable>
     </program>
 

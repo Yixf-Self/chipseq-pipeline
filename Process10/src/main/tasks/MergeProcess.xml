@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	java -Xmx8g -jar /lustre/mib-cri/carrol09/Picard/MergeSamFiles.jar ${InputVector} MERGE_SEQUENCE_DICTIONARIES=true OUTPUT=${TheDirectory}/bamFiles/${OutputName}_TMP.bam VALIDATION_STRINGENCY=SILENT
+	java -Xmx8g -jar /lustre/mib-cri/carrol09/Picard/MergeSamFiles.jar ${InputVector} MERGE_SEQUENCE_DICTIONARIES=true OUTPUT=${MergedFile} VALIDATION_STRINGENCY=SILENT
 	</executable>
     </program>
 

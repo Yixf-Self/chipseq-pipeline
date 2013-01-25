@@ -41,7 +41,7 @@
        
 	 <task name="MacsProcess" type="MacsProcess">
         <resources>
-            <memory>4G</memory>
+            <memory>8G</memory>
         </resources>
             <inputs>
                 <input name="TestBam">${BamDirectory}/${Test}.bam</input>
@@ -62,6 +62,29 @@
 		<arg name="shiftSize">${SS}</arg>
 
 
+    	</arguments> 
+            
+	</task>
+
+	 <task name="AnnotatePeakProcess" type="AnnotatePeakProcess">
+       <depends>
+	     <task>MacsProcess</task>
+   	</depends> 
+       <resources>
+            <memory>4G</memory>
+        </resources>
+            <inputs>
+                <input name="Peaks">${WorkingDirectory}/Peaks/Macs_Peaks/${Test}_peaks.bed</input>
+            </inputs>
+
+            <outputs>
+              <output name="AnnotatedPeaks" deleteOnFailure="false">${WorkingDirectory}/Peaks/Macs_Peaks/${Test}_peaks_Annotated.xls</output>
+		<output name="SummaryAnnotation" deleteOnFailure="false">${WorkingDirectory}/Peaks/Macs_Peaks/${Test}_peaks_Annotated.summary</output>
+		<output name="EnrichmentFile" deleteOnFailure="false">${WorkingDirectory}/Peaks/Macs_Peaks/${Test}_GO_Results.txt</output>
+            </outputs>
+    	<arguments>
+	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+	    <arg name="genome">${GT}</arg>
     	</arguments> 
             
 	</task>

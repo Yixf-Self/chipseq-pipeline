@@ -8,13 +8,13 @@
 
     <program type="commandLine">
         <executable>
-	complementBed -hist -i ${bed} -g ${genomefile} > ${compbed}
+	complementBed  -i ${bed} -g ${genomeFile} > ${compbed}
 	</executable>
     </program>
 
     <inputs>
         <input name="bed" required="true" description="The Bam file." />
-        <input name="genomefile" required="true" description="The Bam file." />
+        <input name="genomeFile" required="true" description="The Bam file." />
     </inputs>
 
     <outputs>

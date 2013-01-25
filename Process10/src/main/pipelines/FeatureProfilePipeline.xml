@@ -44,7 +44,7 @@
         </resources>
         
 	<inputs>
-            <input name="bam">${WorkingDirectory}/bamFiles/${samplename}.bam</input>
+            <input name="bam">${bamDirectory}/${samplename}.bam</input>
    	     <input name="bed">${targetregionsbed}</input>
        </inputs>
 	     
@@ -58,6 +58,29 @@
  
       </task>
 
+
+	 <task name="CountMappedProcess" type="CountMappedProcess">
+
+	 <resources>
+            <memory>4G</memory>
+		<!--<cpus>4</cpus>-->
+        </resources>
+        
+	<inputs>
+            <input name="bam">${bamDirectory}/${samplename}.bam</input>
+       </inputs>
+	     
+       <outputs>
+               <output name="MappedCount"  deleteOnFailure="true">${WorkingDirectory}/FeatureProfiles/${samplename}_Total.count</output>
+       </outputs>
+
+       <arguments>
+    	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+	</arguments> 
+ 
+      </task>
+
+
 	 <task name="CountOffBedProcess" type="CountInBedProcess">
 
 	 <resources>
@@ -66,7 +89,7 @@
         </resources>
         
 	<inputs>
-            <input name="bam">${WorkingDirectory}/bamFiles/${samplename}.bam</input>
+            <input name="bam">${bamDirectory}/${samplename}.bam</input>
    	     <input name="bed">${offtargetregionsbed}</input>
        </inputs>
 	     
@@ -91,12 +114,12 @@
         </resources>
         
 	<inputs>
-            <input name="bam">${WorkingDirectory}/bamFiles/${samplename}.bam</input>
+            <input name="bam">${bamDirectory}/${samplename}.bam</input>
    	     <input name="bed">${targetregionsbed}</input>
        </inputs>
 	     
        <outputs>
-               <output name="ontargethist"  deleteOnFailure="true">${WorkingDirectory}/FeatureProfiles/${samplename}_ontarget.hist</output>
+               <output name="hist"  deleteOnFailure="true">${WorkingDirectory}/FeatureProfiles/${samplename}_ontarget.hist</output>
        </outputs>
 
        <arguments>
@@ -114,7 +137,7 @@
         </resources>
         
 	<inputs>
-            <input name="bam">${WorkingDirectory}/bamFiles/${samplename}.bam</input>
+            <input name="bam">${bamDirectory}/${samplename}.bam</input>
    	     <input name="offbed">${offtargetregionsbed}</input>
        </inputs>
 	     
@@ -129,7 +152,9 @@
       </task>
 
 	 <task name="OffCoveraqe_GrepAllFromHistProcess" type="OffCoverage_GrepAllFromHistProcess">
-
+	<depends>
+	     <task>OffCoveraqeProfilesProcess</task>
+	</depends> 
 	 <resources>
             <memory>2G</memory>
 		<!--<cpus>4</cpus>-->
@@ -146,7 +171,9 @@
       </task>
 
 	 <task name="OnCoveraqe_GrepAllFromHistProcess" type="OnCoverage_GrepAllFromHistProcess">
-
+	<depends>
+	     <task>CoveraqeProfilesProcess</task>
+	</depends> 
 	 <resources>
             <memory>2G</memory>
 		<!--<cpus>4</cpus>-->
@@ -170,7 +197,7 @@
         </resources>
         
 	<inputs>
-            <input name="bam">${WorkingDirectory}/bamFiles/${samplename}.bam</input>
+            <input name="bam">${bamDirectory}/${samplename}.bam</input>
    	     <input name="bed">${offtargetregionsbed}</input>
        </inputs>
 	     

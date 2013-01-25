@@ -27,6 +27,7 @@
         <BamDirectory>BamDirectory_ToChange</BamDirectory>
 	<WorkingDirectory>WorkingDirectory_ToChange</WorkingDirectory>
         <genomeFile>GenomeLengths_ToChange</genomeFile>
+        <genomeName>genomeName_ToChange</genomeName>
     </variables>
 
 

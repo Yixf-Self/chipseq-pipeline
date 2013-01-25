@@ -58,16 +58,20 @@ group.add_argument('--tempDirectory',nargs=1,metavar="",
                     help='Temporary Directory')
                     
 
-group2.add_argument('--callMacsPeaks',default=False,
-                    dest='macson',metavar="",
+group2.add_argument('--callMacsPeaks', nargs=1,choices=['Yes','No'],
+                    dest='callmacspeaks',default="Yes",
                     help='Call MACS peaks')
 
-group2.add_argument('--callSicerPeaks', default=False,
-                    dest='siceron',metavar="",
+group2.add_argument('--callSicerPeaks', nargs=1,choices=['Yes','No'],
+                    dest='callsicerpeaks',default="No",
                     help='Call Sicer peaks')
 
-group2.add_argument('--callTpicsPeaks', default=False,
-                    dest='tpicson',metavar="",
+group2.add_argument('--callTpicsPeaks', nargs=1,choices=['Yes','No'],
+                    dest='calltpicspeaks',default="No",
+                    help='Call T-PICS peaks')
+
+group2.add_argument('--callMacsMotifs', nargs=1,choices=['Yes','No'],
+                    dest='callmacsmotifs',default="No",
                     help='Call T-PICS peaks')
 
 group.add_argument('--bamDirectory',nargs=1,metavar="",dest='bamdirectory',
@@ -92,6 +96,11 @@ group.add_argument('--addProjects',nargs="*",action='append', dest='Projects',me
                     help='Project/s to be merged with the current project',
                     )
 
+group.add_argument('--addMetadata',nargs="*",action='append', dest='metadata',metavar="SampleSheet.csv",
+                    default=[],
+                    help='SampleSheets containing metadata to be added to the current project',
+                    )
+
 parser.add_argument('--version', action='version', version='%(prog)s 0.1')
 ConfigArgs.add_argument('Config Variables',nargs=argparse.REMAINDER,help="Overwrite or include additional variables into config.ini")
 
@@ -108,8 +117,8 @@ if str(CmdLineOptions["tempdirectory"]) != "None":
 	Temptemp = os.path.join(ConfigOptions["workingdirectory"],"Temp")
 
 config = ConfigParser.ConfigParser()
-if os.path.exists(os.path.join(Temptemp,"Config.ini")):
-	config.read(os.path.join(Temptemp,"Config.ini"))
+if os.path.exists(os.path.join(Temptemp,"config.ini")):
+	config.read(os.path.join(Temptemp,"config.ini"))
 	print "\nLocal config file found"
 else:
 	config.read("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/Config/Config.ini")
@@ -127,8 +136,22 @@ for Key in AllKeys:
 	if Key in ConfigOptions:
 		#print Key+"\t"+ConfigOptions[Key]
 		if str(ConfigOptions[Key]) != str(CmdLineOptions[Key]) and CmdLineOptions[Key] is not None:
-			print "Overwriting config option for "+Key+" to "+str(CmdLineOptions[Key])+"\n"
-			ConfigOptions[Key] = CmdLineOptions[Key]
+			print "Overwriting config option for "+Key+" to "+str(CmdLineOptions[Key][0])+"\n"
+			if Key != "genome":
+				ConfigOptions[Key] = str(CmdLineOptions[Key])
+			if Key == "genome":
+				ConfigOptions[Key] = str(CmdLineOptions[Key][0])
+			if Key == "callmacspeaks":
+				ConfigOptions[Key] = str(CmdLineOptions[Key][0])
+			if Key == "callsicerpeaks":
+				ConfigOptions[Key] = str(CmdLineOptions[Key][0])
+			if Key == "calltpicspeaks":
+				ConfigOptions[Key] = str(CmdLineOptions[Key][0])
+			if Key == "callmacsmotifs":
+				ConfigOptions[Key] = str(CmdLineOptions[Key][0])
+
+			#ConfigOptions[Key] = CmdLineOptions[Key]
+			#print str(ConfigOptions[Key][0])+"\n"
 
 if str(ConfigOptions["genome"]) == "None" and str(CmdLineOptions["genome"]) == "None":
 	print "No Genome set in config or as commandline argument\nplease see usage with {ChipSeqPipeline --help}\n"
@@ -154,12 +177,21 @@ if not os.path.exists(ConfigOptions["tempdirectory"]):
     os.makedirs(ConfigOptions["tempdirectory"])
 
 ExtraSLXids = []
+if CmdLineOptions["metadata"]:
+	metadata = CmdLineOptions["metadata"][0]
+	metaFile = open(os.path.join(ConfigOptions["tempdirectory"],"metadata.txt"),"w")
+	for meta in metadata:
+		metaFile.write(str(meta)+"\n")
+	metaFile.close()
+
+ExtraMeta = []
 if CmdLineOptions["SLXids"]:
 	ExtraSLXids = CmdLineOptions["SLXids"][0]
 	SLXFile = open(os.path.join(ConfigOptions["tempdirectory"],"Samples_SLXIDs.txt"),"w")
 	for SLXid in ExtraSLXids:
 		SLXFile.write(str(SLXid)+"\n")
 	SLXFile.close()
+
 
 ExtraProjects = []
 if CmdLineOptions["Projects"] or CmdLineOptions["usepresentdir"]:
@@ -197,17 +229,25 @@ inifile = open(os.path.join(ConfigOptions["tempdirectory"],"config.ini"),'w')
 OutConfig = ConfigParser.ConfigParser()
 # add the settings to the structure of the file, and lets write it out...
 OutConfig.add_section('Analysis Settings')
+OutConfig.add_section('Peak Calling')
 OutConfig.add_section('SLX and Project Management')
 OutConfig.add_section('Executables')
 OutConfig.add_section('Custom Scripts')
 OutConfig.add_section('ExcludedRegions')
 OutConfig.add_section('Genomes')
 
-OutConfig.set('Analysis Settings','genome',ConfigOptions["genome"][0])
+OutConfig.set('Analysis Settings','genome',str(ConfigOptions["genome"]))
 OutConfig.set('Analysis Settings','excludedRegions',str(ConfigOptions["excludedregions"]))
 OutConfig.set('Analysis Settings','mapQFilter',str(ConfigOptions["mapqfilter"]))
 OutConfig.set('Analysis Settings','useExcludedRegionFilter',str(ConfigOptions["useexcludedregionfilter"]))
 OutConfig.set('Analysis Settings','removeDuplicates',str(ConfigOptions["removeduplicates"]))
+
+
+OutConfig.set('Peak Calling','callmacspeaks',str(ConfigOptions["callmacspeaks"]))
+OutConfig.set('Peak Calling','callsicerpeaks',str(ConfigOptions["callsicerpeaks"]))
+OutConfig.set('Peak Calling','calltpicspeaks',str(ConfigOptions["calltpicspeaks"]))
+OutConfig.set('Peak Calling','callmacsmotifs',str(ConfigOptions["callmacsmotifs"]))
+
 
 OutConfig.set('SLX and Project Management','workingdirectory',str(ConfigOptions["workingdirectory"]))
 OutConfig.set('SLX and Project Management','bamdirectory',str(ConfigOptions["bamdirectory"]))
@@ -231,8 +271,8 @@ OutConfig.set('Custom Scripts','fastqlocations_script',str(ConfigOptions["fastql
 OutConfig.set('Custom Scripts','sicer_cri_script',str(ConfigOptions["sicer_cri_script"]))
 OutConfig.set('Custom Scripts','tpicszeta_cri_script',str(ConfigOptions["tpicszeta_cri_script"]))
 
-OutConfig.set('ExcludedRegions','HG18',str(ConfigOptions["excluded_hg18"]))
-OutConfig.set('ExcludedRegions','GRCh37',str(ConfigOptions["excluded_grch37"]))
+OutConfig.set('ExcludedRegions','HG18',str(ConfigOptions["hg18"]))
+OutConfig.set('ExcludedRegions','GRCh37',str(ConfigOptions["grch37"]))
 
 OutConfig.set('Genomes','HG18',str(ConfigOptions["hg18"]))
 OutConfig.set('Genomes','GRCh37',str(ConfigOptions["grch37"]))

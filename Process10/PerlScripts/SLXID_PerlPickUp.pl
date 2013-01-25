@@ -38,7 +38,7 @@ my $lanes = $exportService->call('getAllSampleLanesForId',$line);
 #print OUT " ID => $line\n";
 foreach my $lane (@$lanes) {
 		#print $lane;
-                my $locations = $exportService->call('getFileLocations', $lane->{'sampleProcess_id'}, 'FILE', 'BAM');
+                my $locations = $exportService->call('getFileLocations', $lane->{'sampleProcess_id'}, 'HTTP', 'BAM');
 		foreach my $location (@$locations) {
                                 printHash($location);
                 }

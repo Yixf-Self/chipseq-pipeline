@@ -4,7 +4,7 @@ WkgDir <- getwd()
 Args <- commandArgs(trailingOnly = TRUE)
 library(raster)
 UserName = system("id -nu",wait=TRUE,intern=TRUE)
-MegaName <- paste("crwin\\\\",UserName,"@uk-cri-larc01",sep="")
+MegaName <- paste("cri.camres.org\\\\",UserName,"@uk-cri-larc01",sep="")
 
 ConfigFile <- readIniFile(file.path(Args[2],"config.ini"))
 ConfigFile <- readIniFile(file.path(WkgDir,"Temp","config.ini"))
@@ -13,7 +13,7 @@ ConfigFile <- readIniFile(file.path(WkgDir,"Temp","config.ini"))
 
 LocationsDir <- ConfigFile[ConfigFile[,2] %in% "tempdirectory",3]
 WkgDir<- ConfigFile[ConfigFile[,2] %in% "workingdirectory",3]
- 
+if(file.info(file.path(LocationsDir,"Lims_Info.txt"))$size != 0 & file.info(file.path(LocationsDir,"ActualLocations.txt"))$size != 0){ 
 MajorInfo <- read.delim(file.path(LocationsDir,"Lims_Info.txt"),sep="\t",header=F)
 RemainingInfo <- matrix(nrow=nrow(MajorInfo),ncol=22,data=NA)
 SampleSheet <- cbind(MajorInfo,RemainingInfo)
@@ -48,8 +48,8 @@ SampleSheet <- NewSheet[match(unique(NewSheet[,1]),NewSheet[,1]),]
 }
 
 
-LocationToGet <- as.vector(SampleSheet[!as.vector(SampleSheet[,"Location"]) %in% "No_Lims_Location_Known","Location"])
-BamNames <-  as.vector(SampleSheet[!as.vector(SampleSheet[,"Location"]) %in% "No_Lims_Location_Known","GenomicsID"])
+LocationToGet <-  gsub("/solexa/","/",as.vector(SampleSheet[!as.vector(SampleSheet[,"Location"]) %in% "No_Lims_Location_Known" & !is.na(as.vector(SampleSheet[,"Location"])),"Location"]))
+BamNames <-  as.vector(SampleSheet[!as.vector(SampleSheet[,"Location"]) %in% "No_Lims_Location_Known"  & !is.na(as.vector(SampleSheet[,"Location"])),"GenomicsID"])
 
 #if(length(LocationToGet) > 0){
 
@@ -93,7 +93,27 @@ for(i in 1:nrow(SampleSheet)){
 	}
 }
 
+if(file.exists(file.path(LocationsDir,"metadata.txt"))){
+	MetaSampleSheets <- read.delim(file.path(LocationsDir,"metadata.txt"),stringsAsFactors=F,header=F)[,1]
+	for(i in 1:length(MetaSampleSheets)){
+		MetaInfo <- read.delim(MetaSampleSheets[i],stringsAsFactors=F,header=T,sep=",")
+		for(k in 1:nrow(SampleSheet)){
+			GenomicID <- SampleSheet[k,"GenomicsID"]
+			if(any(MetaInfo[,1] %in% GenomicID)){
+				if(any(colnames(MetaInfo) %in% "Condition")){
+					MetaInfoFull <- MetaInfo[MetaInfo[,1] %in% GenomicID,c("Tissue","Factor","Antibody","Condition","Replicate","InputToUse","toMerge")]
+					SampleSheet[k,c("Tissue","Factor","Antibody","Condition_1","Replicate","InputToUse","toMerge")] <- as.vector(as.matrix(MetaInfoFull))
+				}else{
+					MetaInfoFull <- MetaInfo[MetaInfo[,1] %in% GenomicID,c("Tissue","Factor","Antibody","Condition_1","Condition_2","Replicate","InputToUse","toMerge")]
+					SampleSheet[k,c("Tissue","Factor","Antibody","Condition_1","Condition_2","Replicate","InputToUse","toMerge")] <- as.vector(as.matrix(MetaInfoFull))
+				}
+				
+			}
+		}
+		
+	}
+	
+}
 write.table(SampleSheet,file.path(WkgDir,"SampleSheet.csv"),col.names=T,row.names=F,sep=",",quote=F)
+}
 write.table("Complete",file.path(LocationsDir,paste(Args[1],"_MainBamGet.txt",sep="")),col.names=T,row.names=F,sep=",",quote=F)
-
-

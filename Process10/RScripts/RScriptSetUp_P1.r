@@ -4,7 +4,7 @@ getRandString<-function(len=12) return(paste(sample(c(rep(0:9,each=5),LETTERS,le
 Args <- commandArgs(trailingOnly = TRUE)
 library(raster)
 ConfigFile <- readIniFile(file.path(Args[2],"config.ini"))
-#ConfigFile <- readIniFile(file.path(getwd(),"Temp","config.ini"))
+ConfigFile <- readIniFile(file.path(getwd(),"Temp","config.ini"))
 LocationsDir <- ConfigFile[ConfigFile[,2] %in% "tempdirectory",3]
 WkgDir<- ConfigFile[ConfigFile[,2] %in% "workingdirectory",3]
 BamDir<- ConfigFile[ConfigFile[,2] %in% "bamdirectory",3]
@@ -62,7 +62,7 @@ SecondAllExceptSpecialisations <- TempFull[c(grep("specialisations",TempFull[,1]
 Tommy <- c(FirstAllExceptSpecialisations,BigSet,SecondAllExceptSpecialisations)
 write.table(Tommy,file=file.path(LocationsDir,"TrialP1.xml"),qmethod="escape",quote=F,sep="\t",col.names=F,row.names=F)
 cat("Submitting jobs!............")
-system(paste("java -jar /home/mib-cri/svn_checkouts/workflow/1.2/uberjar/target/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(LocationsDir,"TrialP1.xml"),sep=""),wait=TRUE,intern=FALSE)
+system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(LocationsDir,"TrialP1.xml"),sep=""),wait=TRUE,intern=FALSE)
 cat("Jobs Submitted!\n")
 
 sampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",",stringsAsFactors=F)
@@ -75,7 +75,8 @@ if(any(gsub("_Processed.bam","",ProcessedFiles) %in% gsub(".bam","",BamsInSample
    LogToRead <- file.path(BamDir,LogFiles[gsub("_fileLog.log","",LogFiles) %in% gsub(".bam","",BamsInSampleSheet[i])])
    DataIn <- read.delim(LogToRead,sep="\t")
    sampleSheet[i,c("Original","delRand","Excluded","Filtered","Unique")] <- DataIn[,c("Mapped","NonRandomChr","IncludedRegions","QC...15","Unique")]
-   sampleSheet[i,"DuplicationRate"] <- as.numeric(sampleSheet[i,"Filtered"])/as.numeric(sampleSheet[i,"Unique"])
+   sampleSheet[i,"DuplicationRate"] <- (as.numeric(sampleSheet[i,"Filtered"])-as.numeric(sampleSheet[i,"Unique"]))/as.numeric(sampleSheet[i,"Filtered"])*100
+   sampleSheet[i,"NRF"] <- DataIn[,"Unique"]/DataIn[,"QC...15"]
 }else{
 	sampleSheet[i,"Processed_bamFileName"] <- "No_Processed_Bam"
 	sampleSheet[i,c("Original","delRand","Excluded","Filtered","Unique")] <- rep("No_Information_Available",5)
@@ -111,6 +112,23 @@ for(i in 1:length(BamsInSampleSheet)){
 	}
 }
 
+CorrFiles <- dir(path=file.path(WkgDir,"Fragment_Lengths"),pattern="*CorrFragLog$")
+BamsWithCorrs <- JustBams[JustBams %in% gsub("_Processed.CorrFragLog","",CorrFiles)]
+
+for(i in 1:length(BamsInSampleSheet)){
+	if(gsub(".bam","",BamsInSampleSheet[i]) %in% BamsWithCorrs){
+		CorrToRead <- file.path(WkgDir,"Fragment_Lengths",CorrFiles[gsub("_Processed.CorrFragLog","",CorrFiles) %in% gsub(".bam","",BamsInSampleSheet[i])])
+		print(CorrToRead)
+		DataIn <- as.matrix(read.delim(CorrToRead,sep=" ",comment.char="#"))
+		sampleSheet[i,"CC_Fragment_Length"] <- DataIn[1,1]		
+		sampleSheet[i,"NSC"] <- DataIn[1,2]
+		sampleSheet[i,"RSC"] <- DataIn[1,3]
+	}else{
+		sampleSheet[i,"CC_Fragment_Length"] <- "No_Information_Available"		
+		sampleSheet[i,"NSC"] <- "No_Information_Available"
+		sampleSheet[i,"RSC"] <- "No_Information_Available"	
+	}
+}
 
 
 write.table(sampleSheet,file=file.path(WkgDir,"SampleSheet.csv"),row.names=F,sep=",")

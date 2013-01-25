@@ -13,7 +13,7 @@ if(any(gsub("_Processed.bam","",ProcessedFiles) %in% gsub(".bam","",BamsInSample
    LogToRead <- file.path(WkgDir,"bamFiles",LogFiles[gsub("_fileLog.log","",LogFiles) %in% gsub(".bam","",BamsInSampleSheet[i])])
    DataIn <- read.delim(LogToRead,sep="\t")
    sampleSheet[i,c("Original","delRand","Excluded","Filtered","Unique")] <- DataIn[,c("Mapped","NonRandomChr","IncludedRegions","QC...15","Unique")]
-   sampleSheet[i,"DuplicationRate"] <- as.numeric(sampleSheet[i,"Filtered"])/as.numeric(sampleSheet[i,"Unique"])
+   sampleSheet[i,"DuplicationRate"] <- (as.numeric(sampleSheet[i,"Filtered"])-as.numeric(sampleSheet[i,"Unique"]))/as.numeric(sampleSheet[i,"Filtered"])
 }else{
 	sampleSheet[i,"Processed_bamFileName"] <- "No_Processed_Bam"
 	sampleSheet[i,c("Original","delRand","Excluded","Filtered","Unique")] <- rep("No_Information_Available",5)

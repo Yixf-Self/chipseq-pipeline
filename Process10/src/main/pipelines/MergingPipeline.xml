@@ -19,7 +19,7 @@
             <memory>8G</memory>
         </resources>
             <outputs>
-                <output name="MergedFile" deleteOnFailure="false">${WorkingDirectory}/bamFiles/${OutName}_TMP.bam</output>
+                <output name="MergedFile" deleteOnFailure="false">${WorkingDirectory}/Temp/${OutName}_TMP.bam</output>
             </outputs>
     	<arguments>
     	    <arg name="InputVector">${InputName}</arg>
@@ -38,7 +38,7 @@
             <memory>8G</memory>
         </resources>
 	  <inputs>
-		 <input name="MergedFile">${WorkingDirectory}/bamFiles/${OutName}_TMP.bam</input>
+		 <input name="MergedFile">${WorkingDirectory}/Temp/${OutName}_TMP.bam</input>
 	 </inputs>
             <outputs>
                 <output name="MarkedFile" deleteOnFailure="false">${WorkingDirectory}/bamFiles/${OutName}.bwa.bam</output>

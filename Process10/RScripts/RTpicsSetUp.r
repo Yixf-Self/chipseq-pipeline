@@ -1,14 +1,10 @@
 getRandString<-function(len=12) return(paste(sample(c(rep(0:9,each=5),LETTERS,letters),len,replace=TRUE),collapse=''))
-
 Args <- commandArgs(trailingOnly = TRUE)
 library(raster)
 
-#WkgDir <- getwd()
-#read.delim("/lustre/mib-cri/carrol09/Work/20111109_RossAdams_DN_HNF1bChIP")
+source("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/Workflow_Functions.r")
 
-
-ConfigFile <- readIniFile(file.path(Args[2],"config.ini"))
-#ConfigFile <- readIniFile(file.path(getwd(),"Temp","config.ini"))
+ConfigFile <- readIniFile(file.path(getwd(),"Temp","config.ini"))
 
 
 LocationsDir <- ConfigFile[ConfigFile[,2] %in% "tempdirectory",3]
@@ -19,14 +15,31 @@ Genome <- ConfigFile[ConfigFile[,2] %in% "genome",3]
 GenomeFileOptions <-  ConfigFile[ConfigFile[,1] %in% "Genomes",]
 GenomeFile <- GenomeFileOptions[GenomeFileOptions[,2] %in% tolower(Genome),3]
 
-
-#read.delim("/lustre/mib-cri/carrol09/Work/20111109_RossAdams_DN_HNF1bChIP")
 sampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",")
 SamplesAndInputs <- matrix(data=c(gsub("_Processed\\.bam","",sampleSheet[,"Processed_bamFileName"]),gsub("_Processed\\.bam","",sampleSheet[match(sampleSheet[,"InputToUse"],sampleSheet[,"SampleName"],incomparable=NA),"Processed_bamFileName"])),ncol=2,byrow=F,dimnames=list(NULL,c("Samples","Inputs")))
-SamplesAndInputs <- SamplesAndInputs[!is.na(SamplesAndInputs[,"Inputs"]) & ! SamplesAndInputs[,"Samples"] %in% "No_Processed_Bam",]
+SamplesAndInputs <- SamplesAndInputs[!is.na(SamplesAndInputs[,"Inputs"]) & ! as.vector(SamplesAndInputs[,"Samples"]) %in% "No_Processed_Bam",]
+
+sampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",")
+SamplesAndInputs2 <- matrix(data=c(gsub("_Processed\\.bam","",sampleSheet[,"Processed_bamFileName"]),gsub("_Processed\\.bam","",sampleSheet[match(sampleSheet[,"InputToUse"],sampleSheet[,"GenomicsID"],incomparable=NA),"Processed_bamFileName"])),ncol=2,byrow=F,dimnames=list(NULL,c("Samples","Inputs")))
+SamplesAndInputs2 <- SamplesAndInputs2[!is.na(SamplesAndInputs2[,"Inputs"]) & ! as.vector(SamplesAndInputs2[,"Samples"]) %in% "No_Processed_Bam",]
+
+Temp <- rbind(SamplesAndInputs,SamplesAndInputs2)
+Temp <- Temp[match(unique(Temp[,1]),Temp[,1]),]
+
+SamplesAndInputs <- matrix(Temp,ncol=2,byrow=F)
 
 Config <- read.delim("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/Config/Config.txt",sep="\t",header=F)
-if(nrow(SamplesAndInputs) != 0){
+
+
+CallPeaks <- ConfigFile[ConfigFile[,2] %in% "calltpicspeaks",3]
+
+if(CallPeaks %in% "Yes"){
+	CallPeaks <- TRUE
+}else{
+	CallPeaks <- FALSE	
+}
+
+if(nrow(SamplesAndInputs) != 0 & CallPeaks){
 MacsGenomes <- matrix(c("HG18","hs","GRCh37","hs","MM9","mm"),ncol=2,byrow=T)
 SicerGenomes <- matrix(c("HG18","hg18","GRCh37","hg19","MM9","mm9"),ncol=2,byrow=T)
 TPICsGenomes <- matrix(c("HG18","hg18","GRCh37","GRCh37","MM9","mm9"),ncol=2,byrow=T)
@@ -35,10 +48,10 @@ TPICsGenomes <- matrix(c("HG18","hg18","GRCh37","GRCh37","MM9","mm9"),ncol=2,byr
 MFOLD_PARAMETER <- as.vector(Config[Config[,1] == "Macs_mFold",2])
 FRAGMENTLENGTH_PARAMETER <- as.numeric(as.vector(Config[Config[,1] == "Fragment_Length",2]))
 SHIFTSIZE_PARAMETER <- round(FRAGMENTLENGTH_PARAMETER/2)
-GENOME_PARAMETER <- as.vector(Config[Config[,1] == "Genome",2])
-MACSGENOME_PARAMETER <- as.vector(MacsGenomes[MacsGenomes[,1] == GENOME_PARAMETER,2]) 
-SICERGENOME_PARAMETER <- as.vector(SicerGenomes[SicerGenomes[,1] == GENOME_PARAMETER,2]) 
-TPICSGENOME_PARAMETER <- as.vector(TPICsGenomes[TPICsGenomes[,1] == GENOME_PARAMETER,2]) 
+GENOME_PARAMETER <- Genome
+MACSGENOME_PARAMETER <- as.vector(MacsGenomes[MacsGenomes[,1] == Genome,2]) 
+SICERGENOME_PARAMETER <- as.vector(SicerGenomes[SicerGenomes[,1] == Genome,2]) 
+TPICSGENOME_PARAMETER <- as.vector(TPICsGenomes[TPICsGenomes[,1] == Genome,2]) 
 
 
 if(GENOME_PARAMETER %in% "GRCh37"){
@@ -47,6 +60,7 @@ if(GENOME_PARAMETER %in% "GRCh37"){
 if(GENOME_PARAMETER %in% "HG18"){
 	GENOME_LENGTHS <- "/lustre/mib-cri/carrol09/MyPipe/bedFiles/hg18.txt"
 }
+
 
 
 TempFull <- read.delim("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/MultiTPICS.xml",header=F,stringsAsFactors=F,quote="")
@@ -76,11 +90,13 @@ SecondAllExceptSpecialisations <- TempFull[c(grep("specialisations",TempFull[,1]
 Tommy <- c(FirstAllExceptSpecialisations,BigSet,SecondAllExceptSpecialisations)
 write.table(Tommy,file=file.path(LocationsDir,"TrialTPICS.xml"),qmethod="escape",quote=F,sep="\t",col.names=F,row.names=F)
 cat("Submitting jobs!............")
-system(paste("java -jar /home/mib-cri/svn_checkouts/workflow/1.2/uberjar/target/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(LocationsDir,"TrialTPICS.xml"),sep=""),wait=TRUE,intern=FALSE)
+system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(LocationsDir,"TrialTPICS.xml"),sep=""),wait=TRUE,intern=FALSE)
 cat("Jobs Submitted!\n")
-}else{cat("No Peaks To Call")}
 
-sampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",")
+
+#sampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),sep=",",stringsAsFactors=F)
+sampleSheet <- ReadAndLock(file.path(WkgDir,"SampleSheet.csv"),WkdDir,SAF=F,napTime=5)
+
 
 for(i in 1:nrow(sampleSheet)){
 	SampleToLookFor <- gsub(".bam","",sampleSheet[i,"Processed_bamFileName"])
@@ -91,6 +107,7 @@ for(i in 1:nrow(sampleSheet)){
 		sampleSheet[i,"TPICsPeaks"] <- nrow(DataIn)
 	}
 }	
-	
-write.table(sampleSheet,file=file.path(WkgDir,"SampleSheet.csv"),row.names=F,sep=",")
+WriteAndUnlock(sampleSheet,file.path(WkgDir,"SampleSheet.csv"))	
+#write.table(sampleSheet,file=file.path(WkgDir,"SampleSheet.csv"),row.names=F,sep=",")
+}else{cat("No Peaks To Call")}
 write.table("Complete",file.path(LocationsDir,paste(Args[1],"_MainTpicsProcess.txt",sep="")),col.names=T,row.names=F,sep=",",quote=F)

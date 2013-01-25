@@ -19,5 +19,5 @@ TempFull[grep("TemporaryDirectory_ToChange",TempFull[,1]),1] <- gsub("TemporaryD
 
 write.table(TempFull,file=file.path(TempDir,"MainPipe.xml"),qmethod="escape",quote=F,sep="\t",col.names=F,row.names=F)
 cat("Submitting jobs!............")
-system(paste("java -jar /home/mib-cri/svn_checkouts/workflow/1.2/uberjar/target/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(TempDir,"MainPipe.xml"),sep=""),wait=FALSE,intern=FALSE)
+system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(TempDir,"MainPipe.xml"),sep=""),wait=FALSE,intern=FALSE)
 cat("Jobs Submitted!\n")

@@ -1,7 +1,12 @@
-# /home/mib-cri/local/bin/Rscript --args HG18 /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Peaks/Macs_Peaks/SLX-4497.739.s_2.bwa.homo_sapiens_Processed_peaks.bed Out.txt Enriched.txt
+# /home/mib-cri/local/bin/Rscript /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/RGOAnno.r HG18 /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20100826_RossInnesC_JC_TumorChIPs/Peaks/Macs_Peaks/SLX-1201.250.s_4.bwa.homo_sapiens_Processed_peaks.bed Out.txt Enriched.txt
+
+Args <- c("GRCh37","/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Peaks/Macs_Peaks/SLX-4498.739.s_3.bwa.homo_sapiens_Processed_peaks.bed","Out.txt","Enriched.txt")
+
+
+
 
 Args <- commandArgs(trailingOnly = TRUE)
-library(org.Mm.eg.db)
+library(org.Hs.eg.db)
 
 BuildOverLapRanges <- function(CRIStyle){
   GRanges(seqnames=seqnames(CRIStyle),ranges=IRanges(start=as.numeric(as.vector(elementMetadata(CRIStyle)$OverLap_Start)),end=as.numeric(as.vector(elementMetadata(CRIStyle)$OverLap_End))))
@@ -48,6 +53,8 @@ require(GenomicRanges)
     #seqnames()
     TempNearestRanges <- GRanges()
     for(i in 1:length(unique(seqnames(NotMatchePeaks)))){
+	if(any(seqnames(ExtGenes) %in% unique(seqnames(NotMatchePeaks))[i])){
+	print(i)
       Index <- nearest(ranges(NotMatchePeaks[seqnames(NotMatchePeaks) %in% unique(seqnames(NotMatchePeaks))[i]]),ranges(ExtGenes[seqnames(ExtGenes) %in% unique(seqnames(NotMatchePeaks))[i]]))
       TempNearGenes <- ExtGenes[seqnames(ExtGenes) %in% unique(seqnames(NotMatchePeaks))[i]][Index]
       TempPeaks <- NotMatchePeaks[seqnames(NotMatchePeaks) %in% unique(seqnames(NotMatchePeaks))[i]]
@@ -55,6 +62,9 @@ require(GenomicRanges)
       colnames(TempData2) <- paste("Peak",colnames(TempData2),sep="_")
       elementMetadata(TempNearGenes) <- cbind(as.data.frame(elementMetadata(TempNearGenes)),TempData2)
       TempNearestRanges <- c(TempNearestRanges,TempNearGenes)
+	}else{
+	cat(paste("No Genes found on chromosome -- ",unique(seqnames(NotMatchePeaks))[i],"\n",sep=""))
+	}
     }
     elementMetadata(TempNearestRanges)$Feature <- ("Intragenic")
     levels(elementMetadata(MetaList)$Feature) <-  c(levels(elementMetadata(MetaList)$Feature),"Intragenic")
@@ -110,27 +120,20 @@ require(GenomicRanges)
 
 
 
-Bed2GRanges <- function(BedFile,header=TRUE,strand=T){
+Bed2GRanges <- function(BedFile,header=F,strand=T){
     if (header){
       StartPos <- grep("Start|start",colnames(BedFile))
       EndPos <- grep("End|end",colnames(BedFile))
       ChrPos <- grep("Chr|chr",colnames(BedFile))
-      StrandPos <- grep("Strand|strand",colnames(BedFile))
     }else{
       StartPos <- 2
       EndPos <- 3
       ChrPos <- 1
-      if(ncol(BedFile) > 3 & strand){
-        StrandPos <- 4
-      }else{StrandPos <- numeric()}
     }
-      if(length(StrandPos) != 1){
-        TempRanges_Bed <- GRanges(seqnames=as.vector(BedFile[,ChrPos]),IRanges(start=as.numeric(as.vector(BedFile[,StartPos])),end=as.numeric(as.vector(BedFile[,EndPos]))),strand=rep("*",nrow(BedFile)))
-        elementMetadata(TempRanges_Bed) <- BedFile[,-c(ChrPos,StartPos,EndPos,StrandPos)]
-      }else{
-        TempRanges_Bed <- GRanges(seqnames=as.vector(BedFile[,ChrPos]),IRanges(start=as.numeric(as.vector(BedFile[,StartPos])),end=as.numeric(as.vector(BedFile[,EndPos]))),strand=BedFile[,StrandPos])
-        elementMetadata(TempRanges_Bed) <- BedFile[,-c(ChrPos,StartPos,EndPos,StrandPos)]
-      }
+      TempRanges_Bed <- GRanges(seqnames=as.vector(BedFile[,ChrPos]),IRanges(start=as.numeric(as.vector(BedFile[,StartPos])),end=as.numeric(as.vector(BedFile[,EndPos]))),strand=rep("*",nrow(BedFile)))
+      if(ncol(BedFile) > 3){
+		elementMetadata(TempRanges_Bed) <- BedFile[,-c(ChrPos,StartPos,EndPos)]
+	}
       TempRanges_Bed
 }
 
@@ -161,39 +164,51 @@ elementMetadata(Genes)$Feature <- "Gene"
 GenesAndPromoters <- ExtendGenes(Genes,2000)
 
 
-Peaks <- read.delim(Args[2],sep="\t",comment.char="#")
+Peaks <- read.delim(Args[2],sep="\t",comment.char="#",header=F)
+if(length(grep("TPICS",Args[2])) > 0){
+Peaks <- read.delim(Args[2],sep=" ",comment.char="#",header=F)[,1:3]
+}
 #Peaks <- read.delim("/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Peaks/Macs_Peaks/SLX-4497.739.s_2.bwa.homo_sapiens_Processed_peaks.bed",sep="\t",comment.char="#")
 PeakRanges <- Bed2GRanges(Peaks,header=F,strand=F)
 Genes_Peaks <- PeaksToGenesCRIStyle(GenesAndPromoters,PeakRanges)
 ToPrint <- as.data.frame(Genes_Peaks)
+colnames(ToPrint) <- gsub("seqnames","Chr",colnames(ToPrint))
+
+TotalGenesWithPeaks <- unique(as.vector(ToPrint[!ToPrint[,"Feature"] %in% "Intragenic","SymbolGenes"]))
+PeaksInGenes <- ToPrint[!ToPrint[,"Feature"] %in% "Intragenic",]
+Peaks <- unique(paste(PeaksInGenes[,9],PeaksInGenes[,10],PeaksInGenes[,11],sep="_"))
+
+Totals <- c(length(TotalGenesWithPeaks),length(Peaks))
 write.table(ToPrint,Args[3],sep="\t",row.names=FALSE)
-
-FunctionalTestPeaks <- Genes_Peaks[!elementMetadata(Genes_Peaks)$Feature %in% "Intragenic"]
-GOTerms <- as.list(org.Hs.egGO2ALLEGS)
-Temp <- unlist(as.list(org.Hs.egSYMBOL))
-EntrezToSymbol <- cbind(names(Temp),Temp)
-
-EntrezToSymbol <- EntrezToSymbol[EntrezToSymbol[,2] %in% as.vector(elementMetadata(Genes)$SymbolGenes),]
+write.table(Totals,Args[4],sep="\t",row.names=FALSE)
 
 
+#FunctionalTestPeaks <- Genes_Peaks[!elementMetadata(Genes_Peaks)$Feature %in% "Intragenic"]
+#GOTerms <- as.list(org.Hs.egGO2ALLEGS)
+#Temp <- unlist(as.list(org.Hs.egSYMBOL))
+#EntrezToSymbol <- cbind(names(Temp),Temp)
 
-GOSymbols <- vector("list",length=length(GOTerms))
-for(i in 1:length(GOTerms)){
-  GOSymbols[[i]] <-  unique(EntrezToSymbol[EntrezToSymbol[,1] %in% GOTerms[[i]],2])
-  print(i)
-}
-names(GOSymbols) <- names(GOTerms)
-ResMatrix <- matrix(nrow=length(GOTerms),ncol=6)
-for(i in 1:length(GOSymbols)){
-  print(i)
-  LengthOfTerm <- sum(width(reduce(GenesAndPromoters[elementMetadata(GenesAndPromoters)$SymbolGenes %in% GOSymbols[[i]]])))
-  NoOfPeaks <- length(PeakRanges)
-  NoInTerm <-  length(FunctionalTestPeaks[elementMetadata(FunctionalTestPeaks)$SymbolGenes %in% GOSymbols[[i]]])
-  Total <- 2.7e9
-  Prior <- LengthOfTerm/Total
-  Res <- binom.test(NoInTerm,NoOfPeaks,Prior)$p.value
-  ResMatrix[i,] <- c(names(GOTerms)[i],LengthOfTerm,NoInTerm,Prior,NoInTerm/NoOfPeaks,Res)
-}
-write.table(ResMatrix,Args[4],sep="\t",row.names=FALSE)
+#EntrezToSymbol <- EntrezToSymbol[EntrezToSymbol[,2] %in% as.vector(elementMetadata(Genes)$SymbolGenes),]
+
+
+
+#GOSymbols <- vector("list",length=length(GOTerms))
+#for(i in 1:length(GOTerms)){
+#  GOSymbols[[i]] <-  unique(EntrezToSymbol[EntrezToSymbol[,1] %in% GOTerms[[i]],2])
+#  print(i)
+#}
+#names(GOSymbols) <- names(GOTerms)
+#ResMatrix <- matrix(nrow=length(GOTerms),ncol=6)
+#for(i in 1:length(GOSymbols)){
+#  print(i)
+#  LengthOfTerm <- sum(width(reduce(GenesAndPromoters[elementMetadata(GenesAndPromoters)$SymbolGenes %in% GOSymbols[[i]]])))
+#  NoOfPeaks <- length(PeakRanges)
+#  NoInTerm <-  length(FunctionalTestPeaks[elementMetadata(FunctionalTestPeaks)$SymbolGenes %in% GOSymbols[[i]]])
+#  Total <- 2.7e9
+#  Prior <- LengthOfTerm/Total
+#  Res <- binom.test(NoInTerm,NoOfPeaks,Prior)$p.value
+#  ResMatrix[i,] <- c(names(GOTerms)[i],LengthOfTerm,NoInTerm,Prior,NoInTerm/NoOfPeaks,Res)
+#}
+#write.table(ResMatrix,Args[4],sep="\t",row.names=FALSE)
 
 

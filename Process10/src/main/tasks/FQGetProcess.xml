@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://cancerresearchuk.org/task/1.2 http://uk-cri-lsol03:8080/solexa/solexa01/schema/workflow/task-1.2.xsd">
 
     <name>FQGetProcess</name>
-    <description>Bam merging for ChIPseqPipeline.</description>
+    <description>FQ merging for ChIPseqPipeline.</description>
 
     <program type="commandLine">
         <executable>

@@ -13,7 +13,7 @@
 	perl /lustre/mib-cri/carrol09/MyPipe/PeakCallers/CRI_TPICS/create_coverage.pl ${shiftSize} ${TheDirectory}/bamFiles/${TestBed} ${GenomeForTPICS} ${TestName}
 	perl /lustre/mib-cri/carrol09/MyPipe/PeakCallers/CRI_TPICS/zeta.pl ${shiftSize} ${Width} ${TheDirectory}/bamFiles/${TestBed} ${TheDirectory}/bamFiles/${ControlBed} ${TestName} ${TheWideScaleWidth}
 	Rscript /lustre/mib-cri/carrol09/MyPipe/PeakCallers/CRI_TPICS/tpic.r ${shiftSize} ${GenomeForTPICS}
-	mv ${TestName}/TPIC.final.bed ${TestName}/${SampleName}_TPICS_Peaks.bed
+	
 	</executable>
     </program>
 

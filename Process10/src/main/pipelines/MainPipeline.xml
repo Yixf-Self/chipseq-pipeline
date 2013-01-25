@@ -132,6 +132,143 @@
 	            
 	</task>
 
+		<task name="MainMotifProcess" type="MainMotifProcess">
+	       <depends>
+			<task>MainMacsProcess</task>
+	       </depends>
+		<resources>
+	            <memory>1G</memory>
+	        </resources>
+	
+	
+		<inputs>
+	       	<input name="ConFig">${ConFig}</input>
+	       	<input name="OutPut">${TemporayDirectory}/${PathwayTracker}_MainMacsProcess.txt</input>
+	    	</inputs>
+	
+	    	<outputs>
+	       	<output name="OutPutMotif">${TemporayDirectory}/${PathwayTracker}_MainMotifProcess.txt</output>
+	    	</outputs>
+	
+	    	<arguments>
+	    	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
+		    <arg name="ConfigDir">${TemporayDirectory}</arg>
+	    	</arguments> 
+
+	</task>
+
+		<task name="MainBetweenPeaksProcess" type="MainBetweenPeaksProcess">
+	       <depends>
+			<task>MainMacsProcess</task>
+	       </depends>
+		<resources>
+	            <memory>1G</memory>
+	        </resources>
+	
+	
+		<inputs>
+	       	<input name="ConFig">${ConFig}</input>
+	       	<input name="OutPut">${TemporayDirectory}/${PathwayTracker}_MainMacsProcess.txt</input>
+	    	</inputs>
+	
+	    	<outputs>
+	       	<output name="OutPutMotif">${TemporayDirectory}/${PathwayTracker}_MainBetweenPeaksProcess.txt</output>
+	    	</outputs>
+	
+	    	<arguments>
+	    	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
+		    <arg name="ConfigDir">${TemporayDirectory}</arg>
+	    	</arguments> 
+
+	</task>
+		<task name="MainPeakProfileProcess" type="MainPeakProfileProcess">
+	       <depends>
+			<task>MainMacsProcess</task>
+	       </depends>
+		<resources>
+	            <memory>1G</memory>
+	        </resources>
+	
+	
+		<inputs>
+	       	<input name="ConFig">${ConFig}</input>
+	       	<input name="OutPut">${TemporayDirectory}/${PathwayTracker}_MainMacsProcess.txt</input>
+	    	</inputs>
+	
+	    	<outputs>
+	       	<output name="OutPutPeak">${TemporayDirectory}/${PathwayTracker}_MainPeakProfileProcess.txt</output>
+	    	</outputs>
+	
+	    	<arguments>
+	    	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
+		    <arg name="ConfigDir">${TemporayDirectory}</arg>
+	    	</arguments> 
+	            
+	</task>
+
+		<task name="MainReportProcess" type="MainReportProcess">
+	       <depends>
+			<task>MainMacsProcess</task>
+			<task>MainWigProcess</task>
+			<task>MainSicerProcess</task>
+			<task>MainTpicsProcess</task>
+			<task>MainMotifProcess</task>
+			<task>MainPeakProfileProcess</task>
+			<task>MainAcrossCallersProcess</task>
+			<task>MainBetweenPeaksProcess</task>
+
+
+	       </depends>
+		<resources>
+	            <memory>1G</memory>
+	        </resources>
+	
+	
+		<inputs>
+	       	<input name="ConFig">${ConFig}</input>
+	       	<input name="OutPut">${TemporayDirectory}/${PathwayTracker}_MainBamProcess.txt</input>
+	    	</inputs>
+	
+	    	<outputs>
+	       	<output name="OutPutReport">${TemporayDirectory}/${PathwayTracker}_MainReportProcess.txt</output>
+	    	</outputs>
+	
+	    	<arguments>
+	    	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
+		    <arg name="ConfigDir">${TemporayDirectory}</arg>
+	    	</arguments> 
+	            
+	</task>
+
+		<task name="MainAcrossCallersProcess" type="MainAcrossCallersProcess">
+	       <depends>
+			<task>MainMacsProcess</task>
+			<task>MainSicerProcess</task>
+			<task>MainTpicsProcess</task>
+
+
+	       </depends>
+		<resources>
+	            <memory>1G</memory>
+	        </resources>
+	
+	
+		<inputs>
+	       	<input name="ConFig">${ConFig}</input>
+	       	<input name="OutPut">${TemporayDirectory}/${PathwayTracker}_MainBamProcess.txt</input>
+	    	</inputs>
+	
+	    	<outputs>
+	       	<output name="OutPutReport">${TemporayDirectory}/${PathwayTracker}_MainAcrossPeaksProcess.txt</output>
+	    	</outputs>
+	
+	    	<arguments>
+	    	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
+		    <arg name="ConfigDir">${TemporayDirectory}</arg>
+	    	</arguments> 
+	            
+	</task>
+
 
 		<task name="MainSicerProcess" type="MainSicerProcess">
 	       <depends>

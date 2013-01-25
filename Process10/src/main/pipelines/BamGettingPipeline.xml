@@ -14,7 +14,7 @@
 
 	<subtasks> 
        
-	 <task name="BamGetProcess" type="BamGetProcess">
+	 <task name="BamGetProcess" type="BamGetProcess" attempts="4">
         <resources>
             <memory>1G</memory>
         </resources>

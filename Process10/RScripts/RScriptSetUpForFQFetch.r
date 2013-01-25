@@ -9,14 +9,14 @@ WkgDir<- ConfigFile[ConfigFile[,2] %in% "workingdirectory",3]
 BamDir<- ConfigFile[ConfigFile[,2] %in% "bamdirectory",3]
  
 UserName = system("id -nu",wait=TRUE,intern=TRUE)
-MegaName <- paste("crwin\\\\",UserName,"@uk-cri-larc01",sep="")
+MegaName <- paste("cri.camres.org\\\\",UserName,"@uk-cri-larc01",sep="")
 
 
 
 if(file.exists(file.path(LocationsDir,"ActualFQLocations.txt")) & file.info(file.path(LocationsDir,"ActualFQLocations.txt"))$size > 0){
 
 	Stuff <- as.vector(read.delim(file.path(LocationsDir,"ActualFQLocations.txt"),sep="\t",header=F)[,1])
-	IDIndicies <- grep("ID",Stuff)
+	IDIndicies <- grep("[[:space:]]ID",Stuff)
 	IDIndicies <- c(IDIndicies,length(Stuff))
 	StartIndex <- IDIndicies[1:(length(IDIndicies)-1)]
 	EndIndex <- IDIndicies[2:(length(IDIndicies))]
@@ -31,16 +31,19 @@ if(file.exists(file.path(LocationsDir,"ActualFQLocations.txt")) & file.info(file
 		}
 		TempSLXID <- Stuff[(StartIndex[i])]
 		TempMinorInfo <- gsub(".*=> ","",TempStuff)
+		if(length(TempMinorInfo) > 7){
+			print(i)
+		}
 		TempMinoMat <- matrix(TempMinorInfo,ncol=7,byrow=T)
 		TempMinoMat <- cbind(rep(gsub(".*=> ","",TempSLXID),nrow(TempMinoMat)),TempMinoMat)
 		for(j in 1:nrow(TempMinoMat)){
-			RunID <- strsplit(strsplit(TempMinoMat[1,][5],"Runs")[[1]][2],"_")[[1]][3]
+			RunID <- strsplit(strsplit(TempMinoMat[j,][5],"Runs")[[1]][2],"_")[[1]][3]
 			SeqID <- strsplit(TempMinoMat[j,3],"_se")[[1]][1] 
 			TempMinoMat[j,2] <- paste(gsub(".*=> ","",TempSLXID),RunID,SeqID,sep=".")
 		}
 		MinoMat <- rbind(MinoMat,TempMinoMat)
 	}
-
+	MinoMat <- matrix(MinoMat,byrow=F,ncol=8)
 	MinoMat <- MinoMat[-1,]
 	MinoMatFinal <- cbind(MinoMat[,2],paste(MinoMat[,8],":",MinoMat[,5],"/",MinoMat[,3],sep=""))
 

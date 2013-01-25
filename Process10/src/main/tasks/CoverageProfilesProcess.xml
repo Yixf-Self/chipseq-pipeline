@@ -8,8 +8,8 @@
 
     <program type="commandLine">
         <executable>
-	mkdir -p ${TheDirectory}/FeatureProfiles
-	coverageBed -hist -abam ${bam} -b ${bed} > ${ontargethist}
+#	mkdir -p ${TheDirectory}/FeatureProfiles
+	coverageBed -hist -abam ${bam} -b ${bed} > ${hist}
 	</executable>
     </program>
 
@@ -19,7 +19,7 @@
     </inputs>
 
     <outputs>
-        <output name="ontargethist" required="true" safeNaming="false" description="Bam processes by pipeline" />
+        <output name="hist" required="true" safeNaming="false" description="Bam processes by pipeline" />
     </outputs>
 
     <arguments>

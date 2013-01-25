@@ -26,17 +26,15 @@
         <runDir>RunDirectory_ToChange</runDir>
 	<WorkingDirectory>WorkingDirectory_ToChange</WorkingDirectory>
 	<MotifDatabaseLocation>MotifDatabaseLocation_ToChange</MotifDatabaseLocation>
+	<Fasta>Genome_ToChange</Fasta>
     </variables>
 
 
   <specialisations>
     <specialisation identifier="Indentifier_ToChange" active="true">
       <variables>
-	<Test>RandID</Test>
-	<PeakFileLocation>/lustre/mib-cri/carrol09/Work/TrialGata.txt</PeakFileLocation>
-	<Fasta>Fasta_ToChange</Fasta>	
-
-
+	<Test>Test_ToChange</Test>
+	<PeakFileLocation>PeakFileLocation_ToChange</PeakFileLocation>	
     </variables>
   </specialisation>
 
