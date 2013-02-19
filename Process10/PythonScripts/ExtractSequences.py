@@ -31,8 +31,8 @@ for range in bed:
 	coords = re.split("\t",ChompRange)
 	newSetTemp = []
 	newSetTemp.append(coords[0])
-	newSetTemp.append((float(coords[1])+float(coords[2]))/2-100)
-	newSetTemp.append((float(coords[1])+float(coords[2]))/2+100)
+	newSetTemp.append((float(coords[1])+float(coords[2]))/2-150)
+	newSetTemp.append((float(coords[1])+float(coords[2]))/2+150)
 	newSetTemp.append(coords[3])	
 	bedList.append(newSetTemp)
 
@@ -44,7 +44,7 @@ for region in bedList:
 	K=K+1
 	#print(str(region[0]),int(region[1]),int(region[2]))
 	Sequence = FastaFile.fetch(str(region[0]),int(region[1]),int(region[2]))
-	if len(Sequence) == 200:
+	if len(Sequence) == 300:
 		#print(Sequence)
 		MyFasta.write(">"+region[3]+"\n")
 		MyFasta.write(Sequence+"\n")

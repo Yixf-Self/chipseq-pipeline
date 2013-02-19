@@ -917,7 +917,7 @@ BamIGVLinksFresh[i] <- makeIGVLinkFresh(Bams[i],"Bam",SampleSheet[i,"SampleName"
 
 
 
-SampleSheet <- read.delim("SampleSheet.csv",sep=",",stringsAsFactors=F)
+#SampleSheet <- read.delim("SampleSheet.csv",sep=",",stringsAsFactors=F)
 ss <- cbind(SampleSheet,New,BamIGVLinks,BamIGVLinksFresh)
 colnames(ss)[(ncol(ss)-1):ncol(ss)] <- c("New_IGV_Session","Current_IGV_Session")
 ss <- ss[,c("GenomicsID","SampleName","Run","Lane","Tissue","Factor","Antibody","Condition_1","Condition_2","Replicate","Original","delRand","Excluded","Filtered","Unique","DuplicationRate","Reads_In_TSS","Reads_In_Promoter_2000Up_500Up","Reads_In_Promoter_5000Up_2000Up","Reads_In_Promoter_10000Up_5000Up","Reads_In_GeneBody_Minus_TSS","Reads_In_Intragenic","Percent_Of_Reads_In_TSS","Percent_Of_Reads_In_Promoter_2000Up_500Up","Percent_Of_Reads_In_Promoter_5000Up_2000Up","Percent_Of_Reads_In_Promoter_10000Up_5000Up","Percent_Of_Reads_In_GeneBody_Minus_TSS","Percent_Of_Reads_In_Intragenic","New_IGV_Session","Current_IGV_Session","Duplicates","QC_Filtered","BlackListed","Random_Contigs")]

@@ -579,8 +579,6 @@ RefreshSampleSheet <- function(SS=SampleSheet,PLs=PipeLineLocations){
   CleanedSheet[,"FQLocation"] <- gsub("solexa/solexa","solexa",CleanedSheet[,"FQLocation"])
   CleanedSheet[is.na(CleanedSheet[,"FQLocation"]) | CleanedSheet[,"FQLocation"] %in% "/","FQLocation"] <-  "Location_Not_Known"
   CleanedSheet[is.na(CleanedSheet[,"BamLocation"]) | CleanedSheet[,"BamLocation"] %in% "/" | CleanedSheet[,"BamLocation"] %in% "NA/NA","BamLocation"] <-  "Location_Not_Known"
-  CleanedSheet[,"BamLocation"] <- gsub("archive.crnet.org",GoodNames[[2]],as.vector(CleanedSheet[,"BamLocation"]),fixed=T)
-  CleanedSheet[,"FQLocation"] <- gsub("archive.crnet.org",GoodNames[[2]],as.vector(CleanedSheet[,"FQLocation"]),fixed=T)
   
   CleanedSheet <- CleanedSheet[!apply(CleanedSheet,1,function(x)all(is.na(x))),]
   if(nrow(UpdateLimsFrame) > 0){
@@ -595,6 +593,10 @@ RefreshSampleSheet <- function(SS=SampleSheet,PLs=PipeLineLocations){
         }
     }
     CleanedSheet <- CleanedSheet[!CleanedSheet[,1] == "NA.NA.s_NA",]
+    CleanedSheet[,"BamLocation"] <- gsub("archive.cri.camres.org",GoodNames[[2]],as.vector(CleanedSheet[,"BamLocation"]),fixed=T)
+    CleanedSheet[,"FQLocation"] <- gsub("archive.cri.camres.org",GoodNames[[2]],as.vector(CleanedSheet[,"FQLocation"]),fixed=T)
+    CleanedSheet[,"BamLocation"] <- gsub("/sequencing/","/ArchiveDataFS1/Projects/bioinformatics-sequencing/",as.vector(CleanedSheet[,"BamLocation"]),fixed=T)
+    CleanedSheet[,"FQLocation"] <- gsub("/sequencing/","/ArchiveDataFS1/Projects/bioinformatics-sequencing/",as.vector(CleanedSheet[,"FQLocation"]),fixed=T)
 
     for(i in 1:nrow(CleanedSheet)){
       AlternateName <- paste(unlist(strsplit(CleanedSheet[i,1],"\\."))[1],toupper(CleanedSheet[i,2]),unlist(strsplit(CleanedSheet[i,1],"\\."))[2],unlist(strsplit(CleanedSheet[i,1],"\\."))[3],sep=".")
@@ -603,6 +605,8 @@ RefreshSampleSheet <- function(SS=SampleSheet,PLs=PipeLineLocations){
       }
     }
     CleanedSheet <- CleanedSheet[match(unique(CleanedSheet[,1]),CleanedSheet[,1]),]
+
+
 
   return(CleanedSheet)
 }
@@ -705,6 +709,8 @@ RunCheckGenomePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
 
 RunSSfqfetchPipeline <- function(SampleToGrab=BamsToRealign,SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipeLineLocations,Config="Config"){
 
+  SampleSheet[SampleSheet[,"BamLocation"] %in% c("/","NA"," "),"BamLocation"] <- "Location_Not_Known" 
+  SampleSheet[SampleSheet[,"FQLocation"] %in% c("/","NA"," "),"FQLocation"] <- "Location_Not_Known" 
   
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
   Variables  <- c(file.path(WkgDir,""))
@@ -747,7 +753,7 @@ RunSSfqfetchPipeline <- function(SampleToGrab=BamsToRealign,SampleSheet,WkgDir=W
   BaseFQDirs  <-  basename(FQFilesDirs)
   for(i in 1:nrow(SampleSheet)){
   	if(!any(c(grep(".fq.gz$",SampleSheet[i,"Source_File"]),grep(".fq$",SampleSheet[i,"Source_File"]),grep("Processed",SampleSheet[i,"Source_File"]),grep("Realign",SampleSheet[i,"Source_File"])))){
-      if(any(SampleToGrab %in% SampleSheet[i,"GenomicsID"])){
+      if(any(NameToGrab %in% SampleSheet[i,"GenomicsID"])){
         if(any(BaseFQDirs %in% SampleSheet[i,"GenomicsID"])){
 #  			SampleSheet[i,"Source_File"] <- SampleSheet[i,"FQLocation"][basename(SampleSheet[i,"FQLocation"]) %in% basename(dir(FQFilesDirs[BaseFQDirs %in% SampleSheet[i,"GenomicsID"]],full.names=T))]
         TempSampleFQbases <- basename(dir(FQFilesDirs[BaseFQDirs %in% SampleSheet[i,"GenomicsID"]],full.names=T))
@@ -851,7 +857,6 @@ RunSSRealignmentPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs
    return(SampleSheet)
      
 }
-
 RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipeLineLocations,Config="Config"){
     UniquedMergedFiles <-  as.vector(unique(na.omit(SampleSheet[,"toMerge"])))
     MoreThan1Sample <- names(table(na.omit(SampleSheet[,"SampleName"])))[table(na.omit(SampleSheet[,"SampleName"])) > 1]
@@ -923,18 +928,18 @@ RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
      SSMerge_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
      saveXML(SSMerge_WfMeta,file=file.path(PLs@WorkFlowDir,"SSMerging.xml"))
      system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SSMerging.xml"),sep=""),wait=T)
+     for(i in 1:length(OutputNames)){
      TempMatrix <- matrix(nrow=length(OutputNames),ncol=ncol(SampleSheet),data=NA)
      colnames(TempMatrix) <- colnames(SampleSheet)
-     for(i in 1:length(OutputNames)){
          if(file.exists(file.path(PLs@BamDir,paste(OutputNames[i],".bwa.bam",sep="")))){
             TempMatrix[i,"GenomicsID"] <- OutputNames[i]
             TempMatrix[i,"SampleName"] <- OutputNames[i]
             TempMatrix[i,"BamLocation"] <- file.path(PLs@BamDir,paste(OutputNames[i],".bwa.bam",sep=""))
             TempMatrix[i,"Source_File"] <- paste(OutputNames[i],".bwa.bam",sep="") 
             TempMatrix[i,"Analysis_State"]  <- "RunMe"            
+            SampleSheet <- rbind(SampleSheet,TempMatrix)
          }
      }
-     SampleSheet <- rbind(SampleSheet,TempMatrix[-1,])
      SampleSheet[SampleSheet[,"toMerge"] %in% OutputNames ,"Analysis_State"]  <- "MergedAndUnused"
      SampleSheet[!SampleSheet[,"GenomicsID"] %in% OutputNames & SampleSheet[,"SampleName"] %in% OutputNames & SampleSheet[,"Analysis_State"] %in% "RunMe","Analysis_State"]  <- "MergedAndUnused"
    }
@@ -945,9 +950,9 @@ RunBamProcessPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
    
 #  genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
 
-  MapQFlag <- GetMapQFlag(WkgDir,"Config")
-  DupFlag <- GetDupFlag(WkgDir,"Config")
-  ExcludedFlag <- GetExcludedFlag(WkgDir,"Config")  
+  MapQFlag <- GetMapQFlag(WkgDir,Config)
+  DupFlag <- GetDupFlag(WkgDir,Config)
+  ExcludedFlag <- GetExcludedFlag(WkgDir,Config)  
   
   Variables  <- c(file.path(WkgDir,""),PLs@BamDir,"Dummy",DupFlag,ExcludedFlag,MapQFlag)
   names(Variables) <- c("WorkingDirectory","BamDirectory","genomeFile","DupFlag","ExcludedFlag","MapQFlag")

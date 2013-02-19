@@ -156,13 +156,17 @@ if(addSLXIDs != ""){
 addProjects <- opt$addProjects
 if(addProjects != ""){
   Projects <- as.vector(unlist(strsplit(addProjects,",")))
-  if(file.exists(ProjectsFile) & file.info(ProjectsFile)$size > 0){
-    TempProjects <- as.vector(read.delim(ProjectsFile,sep="",h=F)[,1])
-    write.table(unique(c(TempProjects,Projects)),ProjectsFile,col.names=F,row.names=F,quote=F)
-  }else{
-    write.table(unique(c(Projects)),ProjectsFile,col.names=F,row.names=F,quote=F)
-  }
+}else{
+  Projects <- ""
+}  
+
+if(file.exists(ProjectsFile) & file.info(ProjectsFile)$size > 0){
+  TempProjects <- as.vector(read.delim(ProjectsFile,sep="",h=F)[,1])
+  write.table(unique(c(basename(getwd()),TempProjects,Projects)),ProjectsFile,col.names=F,row.names=F,quote=F)
+}else{
+  write.table(unique(c(basename(getwd()),Projects)),ProjectsFile,col.names=F,row.names=F,quote=F)
 }
+
 
 addSampleNames <- opt$addSampleNames
 if(addSampleNames != ""){

@@ -99,9 +99,10 @@ def CountBedList(bedList,filename,outfileName,outfileName2,header4):
 						strand = strand
 						bedfile.write(str(Chromosome)+"\t"+str(Start)+"\t"+str(end)+"\t"+str(name)+"\t"+str(dummy)+"\t"+str(strand)+"\n")
 			else:
-				
-				if MapQFlag == "False":
-					NotQC += 1
+				NotQC += 1
+				if MapQFlag == "False":	
+					NotQC -= 1
+					countQC += 1
 					if alignedread.is_duplicate == False:
 						NonDupCount +=1
 						alignedread.rname = NewOrder.index(Chromosomes[alignedread.rname])
@@ -131,8 +132,8 @@ def CountBedList(bedList,filename,outfileName,outfileName2,header4):
 							name = alignedread.qname
 							strand = strand
 							bedfile.write(str(Chromosome)+"\t"+str(Start)+"\t"+str(end)+"\t"+str(name)+"\t"+str(dummy)+"\t"+str(strand)+"\n")
-				else:
-					countQC += 1
+				#else:
+				#	countQC += 1
 			printCount += 1
 	outfile.close()
 	TempSamFile.close()
@@ -291,14 +292,14 @@ MapQFlag = sys.argv[7]
 
 
 #ExcludedFlag = True
-#DupFlag = False
+#DupFlag = True
 #MapQFlag = True
 
 
 
 #Genome = "GRCh37"
 #BedFile = "/lustre/mib-cri/carrol09/MyPipe/bedFiles/HG19_ExcludedGenome.bed"
-#BamFile = "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/TwelveTest/bamFiles/S11-E2F1-CHIP-LNCAP-LM-HES6-VEHICLE.bwa.bam"
+#BamFile = "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/Trial/Hickey/20110624_TVAna_CC_MBD24HR/bamFiles/SLX-5380.878.s_1.bwa.homo_sapiens.bam"
 #SequenceDic = "/lustre/mib-cri/carrol09/Work/MyPipe/Genomes/GRCh37/GRCh37_ReducedSeqDict.sam"
 
 if ExcludedFlag == "False":

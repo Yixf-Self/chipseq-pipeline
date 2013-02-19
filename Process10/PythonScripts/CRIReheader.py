@@ -224,7 +224,7 @@ Genome = sys.argv[2]
 
 print(BamFile)
 #BamFile = "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/bamFiles/SLX-4499_Realign.bam"
-Genome="GRCh37"
+#Genome="GRCh37"
 
 tstart = datetime.now()
 pysam.index(BamFile)

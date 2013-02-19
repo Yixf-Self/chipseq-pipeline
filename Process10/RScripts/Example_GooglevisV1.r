@@ -49,7 +49,8 @@ for(k in nrow(SampleSheet)){
 SampleSheet[k,which(SampleSheet[k,] == "No_Information_Available")] <- NA
 }
 write.table(SampleSheet,"SampleSheet.csv",sep=",",row.names=F,quote=F)
-
+SampleSheet <- SampleSheet[SampleSheet[,"Analysis_State"] == "RunMe",]
+SampleSheet[,"SampleName"] <- make.names(SampleSheet[,"SampleName"],unique=T)
 
 ### Open HTML page for writing
 p <- openPage(file.path(WkgDir,"HTML_Report","SampleSummary4.html"))
