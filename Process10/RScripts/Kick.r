@@ -100,7 +100,7 @@ Res[Res[,2] %in% "tpicsdirectory" & Res[,3] %in% "",3] <- file.path(WkgDir,"Peak
 
 
 
-AllSections <- unique(Res[,1])[!unique(Res[,1]) %in% "Custom Scripts"]
+AllSections <- unique(Res[,1])[!unique(Res[,1]) %in% c("Custom Scripts","PipeLine_Base")]
 file.rename(ConfigOut,gsub(".ini","old.ini",ConfigOut))
 file.create(ConfigOut,showWarnings=T)
 for(i in 1:length(AllSections)){

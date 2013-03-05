@@ -577,6 +577,7 @@ ggsave(p,file=file.path(WkgDir,"HTML_Report","Plots",paste(Caller,"GCcontentInpe
 GetCoverageProfilePlot <- function(SampleSheet){
 ss <- SampleSheet
 TSSProfilesFiles <- dir(file.path(WkgDir,"Coverage"),pattern="*Processed.RData",full.names=T)
+TSSProfilesFiles <- TSSProfilesFiles[gsub(".RData","",gsub("TSS_AvCov_","",basename((TSSProfilesFiles)))) %in% gsub("\\.bam","",ss[,"Processed_bamFileName"])]
 TSSAverageMat <-  matrix(nrow=length(TSSProfilesFiles),ncol=5001)
 namesForMat <- vector("character",length=length(TSSProfilesFiles))
 ReadAmountsForMat <- vector("numeric",length=length(TSSProfilesFiles))
@@ -899,7 +900,8 @@ MakeSSRS <- function(SampleSheet,genome,chartOptions){
 Bams <- vector("character",length=nrow(SampleSheet))
 BamIGVLinks <-   vector("character",length=nrow(SampleSheet))
 BamIGVLinksFresh <-  vector("character",length=nrow(SampleSheet))
-BamLocations <- dir(pattern="*_Processed.bam$",path=file.path(WkgDir,"bamFiles"),full.names=T)
+#BamLocations <- dir(pattern="*_Processed.bam$",path=file.path(WkgDir,"bamFiles"),full.names=T)
+BamLocations <-  file.path(WkgDir,"bamFiles",SampleSheet[,"Processed_bamFileName"])
 for(i in 1:nrow(SampleSheet)){
    if(length(grep(SampleSheet[i,1],BamLocations)) > 0){
      Bams[i] <-  BamLocations[grep(SampleSheet[i,"GenomicsID"],BamLocations)]
@@ -922,6 +924,15 @@ ss <- cbind(SampleSheet,New,BamIGVLinks,BamIGVLinksFresh)
 colnames(ss)[(ncol(ss)-1):ncol(ss)] <- c("New_IGV_Session","Current_IGV_Session")
 ss <- ss[,c("GenomicsID","SampleName","Run","Lane","Tissue","Factor","Antibody","Condition_1","Condition_2","Replicate","Original","delRand","Excluded","Filtered","Unique","DuplicationRate","Reads_In_TSS","Reads_In_Promoter_2000Up_500Up","Reads_In_Promoter_5000Up_2000Up","Reads_In_Promoter_10000Up_5000Up","Reads_In_GeneBody_Minus_TSS","Reads_In_Intragenic","Percent_Of_Reads_In_TSS","Percent_Of_Reads_In_Promoter_2000Up_500Up","Percent_Of_Reads_In_Promoter_5000Up_2000Up","Percent_Of_Reads_In_Promoter_10000Up_5000Up","Percent_Of_Reads_In_GeneBody_Minus_TSS","Percent_Of_Reads_In_Intragenic","New_IGV_Session","Current_IGV_Session","Duplicates","QC_Filtered","BlackListed","Random_Contigs")]
 
+ss[,"Unique"] <- as.numeric(ss[,"Unique"])
+ss[,"Original"] <- as.numeric(ss[,"Original"])
+ss[,"Excluded"] <- as.numeric(ss[,"Excluded"])
+ss[,"Filtered"] <- as.numeric(ss[,"Filtered"])
+ss[,"DuplicationRate"] <- as.numeric(ss[,"DuplicationRate"])
+
+
+
+
 Chart1 <- c("SampleName","Percent_Of_Reads_In_TSS","Percent_Of_Reads_In_Promoter_2000Up_500Up","Percent_Of_Reads_In_Promoter_5000Up_2000Up","Percent_Of_Reads_In_Promoter_10000Up_5000Up","Percent_Of_Reads_In_GeneBody_Minus_TSS","Percent_Of_Reads_In_Intragenic")
 Chart2 <- c("SampleName","Reads_In_TSS","Reads_In_Promoter_2000Up_500Up","Reads_In_Promoter_5000Up_2000Up","Reads_In_Promoter_10000Up_5000Up","Reads_In_GeneBody_Minus_TSS","Reads_In_Intragenic")
 Chart3 <- c("SampleName","Random_Contigs","BlackListed","QC_Filtered","Duplicates","Unique")
@@ -942,9 +953,22 @@ GiniCovPics <- vector("character",length=nrow(SampleSheet))
 BigWigs <- vector("character",length=nrow(SampleSheet))
 BWIGVLinks <- vector("character",length=nrow(SampleSheet))
 BWIGVLinksFresh <- vector("character",length=nrow(SampleSheet))
+
+
 GiniFiles <- dir(pattern="*_GiniCoverage.png",path=file.path(WkgDir,"Coverage"),full.names=F)
 GiniFileLocations <- dir(pattern="*_GiniCoverage.png",path=file.path(WkgDir,"Coverage"),full.names=T)
-BigWigLocations <- dir(pattern="*.bw$",path=file.path(WkgDir,"Coverage"),full.names=T)
+
+GiniFiles <- GiniFiles[gsub("_GiniCoverage.png","",basename((GiniFiles))) %in% gsub("\\.bam","",SampleSheet[,"Processed_bamFileName"])]
+GiniFileLocations <- GiniFileLocations[gsub("_GiniCoverage.png","",basename((GiniFiles))) %in% gsub("\\.bam","",SampleSheet[,"Processed_bamFileName"])]
+
+
+BigWigLocations <-  SampleSheet[,"BigWig_Files"]
+
+#BigWigLocations <- dir(pattern="*.bw$",path=file.path(WkgDir,"Coverage"),full.names=T)
+#GiniFileLocations <- GiniFileLocations[gsub("_GiniCoverage.png","",basename((GiniFiles))) %in% gsub("\\.bam","",ss[,"Processed_bamFileName"])]
+
+
+
 for(i in 1:nrow(SampleSheet)){
 if(length(grep(SampleSheet[i,1],GiniFiles)) > 0){
 GiniCovPics[i] <- GiniFiles[grep(SampleSheet[i,1],GiniFiles)]
@@ -1046,6 +1070,11 @@ ss <- ss[,c("GenomicsID","SampleName")]
 
 TSSProfilesFiles <- dir(file.path(WkgDir,"Peaks",Caller,"PeakProfiles"),pattern="*_InGenePeakCounts.txt",full.names=T)
 TSSProfilesFiles2 <- dir(file.path(WkgDir,"Peaks",Caller,"PeakProfiles"),pattern="*_InGenePeakCounts.txt",full.names=F)
+
+TSSProfilesFiles <- TSSProfilesFiles[gsub("_InGenePeakCounts.txt","",basename((TSSProfilesFiles))) %in% SampleSheet[,"GenomicsID"]]
+TSSProfilesFiles2 <- TSSProfilesFiles2[gsub("_InGenePeakCounts.txt","",basename((TSSProfilesFiles))) %in% SampleSheet[,"GenomicsID"]]
+
+
 TSSCountMat <-  matrix(nrow=length(TSSProfilesFiles),ncol=15)
 FileNames <- gsub("_In.*","",TSSProfilesFiles2)
 Temp <- vector("character",length(TSSProfilesFiles))
@@ -1070,6 +1099,10 @@ Tempss <- ss[,c("GenomicsID","Filtered")]
 
 OnHistFiles <- dir(path=file.path(WkgDir,"Peaks",Caller,"PeakProfiles"),pattern="*MergedCounts.bed$",full.names=T)
 namesForGraph <- gsub("_MergedCounts.bed","",dir(path=file.path(WkgDir,"Peaks",Caller,"PeakProfiles"),pattern="*MergedCounts.bed$",full.names=F))
+
+OnHistFiles <- OnHistFiles[gsub("_MergedCounts.bed","",basename((OnHistFiles))) %in% SampleSheet[,"GenomicsID"]]
+namesForGraph <- namesForGraph[gsub("_MergedCounts.bed","",basename((OnHistFiles))) %in% SampleSheet[,"GenomicsID"]]
+
 
 TotalRatio  <- vector("numeric",length=length(OnHistFiles))
 Total  <- vector("numeric",length=length(OnHistFiles))

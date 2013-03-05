@@ -42,15 +42,20 @@ system(paste("mkdir -p ",file.path(WkgDir,"HTML_Report","IGV")))
 ## Read in SampleSheet
 SampleSheet <- read.delim(file.path(WkgDir,"SampleSheet.csv"),stringsAsFactors=F,sep=",",h=T)
 ##fix for idiots like me
+SampleSheet <- SampleSheet[!is.na(SampleSheet[,"GenomicsID"]),]
+write.table(SampleSheet,"SampleSheet.csv",sep=",",row.names=F,quote=F)
+SampleSheet <- SampleSheet[SampleSheet[,"Analysis_State"] == "RunMe",]
+#SampleSheet[,"SampleName"] <- make.names(SampleSheet[,"SampleName"],unique=T)
 NewGroup <- cbind(SampleSheet[,c("GenomicsID","SampleName")],paste(SampleSheet[,"Tissue"],SampleSheet[,"Factor"],sep="_"))
 
 colnames(NewGroup) <- c("GenomicsID","SampleName","Tissue_And_Factor")
 for(k in nrow(SampleSheet)){
 SampleSheet[k,which(SampleSheet[k,] == "No_Information_Available")] <- NA
 }
-write.table(SampleSheet,"SampleSheet.csv",sep=",",row.names=F,quote=F)
-SampleSheet <- SampleSheet[SampleSheet[,"Analysis_State"] == "RunMe",]
-SampleSheet[,"SampleName"] <- make.names(SampleSheet[,"SampleName"],unique=T)
+
+
+#write.table(SampleSheet,"SampleSheet.csv",sep=",",row.names=F,quote=F)
+
 
 ### Open HTML page for writing
 p <- openPage(file.path(WkgDir,"HTML_Report","SampleSummary4.html"))

@@ -379,6 +379,7 @@ CheckFromDemultiplex <- function(PLs=PipeLineLocations,SS=SampleSheet){
   colnames(TempBarcodes) <- colnames(SS)
   NotKnownSS <- SS[(SS[,"FQLocation"]) %in% "Location_Not_Known",]
   SS <-  SS[!(SS[,"FQLocation"]) %in% "Location_Not_Known",]
+  if(nrow(SS) > 0){
   for(i in 1:nrow(SS)){
       ID <- SS[i,"GenomicsID"]
       if(length(grep("^SLX",ID)) > 0){
@@ -403,7 +404,9 @@ CheckFromDemultiplex <- function(PLs=PipeLineLocations,SS=SampleSheet){
           SS[i,"BarcodesFiles"] <- dir(file.path(PLs@LocationsDir,"barcodes"),full.names=T)[dir(file.path(PLs@LocationsDir,"barcodes")) %in% paste(names(BarcodesForSamples),".txt",sep="")]
       }
   }
+  }
   SS <- rbind(SS,NotKnownSS,TempBarcodes)
+  SS <- SS[!is.na(SS[,1]),]
   return(SS)
 }
 
@@ -921,7 +924,7 @@ RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
         names(Specialisations[[length(Specialisations)]]) <- c("InputName","OutName")  
       }
     }
-   
+    if(length(Specialisations) > 0){
      names(Specialisations) <- seq(1,length(Specialisations))  
      Pipeline <- "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MergingPipeline.xml"
      PipeName <- "Merging"
@@ -943,6 +946,8 @@ RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
      SampleSheet[SampleSheet[,"toMerge"] %in% OutputNames ,"Analysis_State"]  <- "MergedAndUnused"
      SampleSheet[!SampleSheet[,"GenomicsID"] %in% OutputNames & SampleSheet[,"SampleName"] %in% OutputNames & SampleSheet[,"Analysis_State"] %in% "RunMe","Analysis_State"]  <- "MergedAndUnused"
    }
+   }
+   SampleSheet <- SampleSheet[!is.na(SampleSheet[,"GenomicsID"]),]
    SampleSheet
 }
 
@@ -1092,7 +1097,8 @@ RunBamProfilePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
   		rm(ssdOfSample)
   	}
   	ReadsInFeatures <- dir(path=file.path(WkgDir,"Coverage"),pattern=paste(SampleToLookFor,"_ReadCountsInFeatures.txt",sep=""),full.names=T)
-  	if(length(CovStats) > 0){
+  	if(length(ReadsInFeatures) > 0){
+  	
   		Temp <- read.delim(ReadsInFeatures,h=T,sep="\t")
   		if(any(colnames(Temp) %in% "TSS_500Upstream_500Downstream")){
   			Total <- Temp["Counts","Total"]

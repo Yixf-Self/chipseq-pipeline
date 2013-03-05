@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 		export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
-		/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/R_HTMLReport.r ${TheDirectory}
+		/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/Example_GooglevisV1.r ${TheDirectory}
 	</executable>
     </program>
 
