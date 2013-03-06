@@ -12,7 +12,7 @@ initial.options <- commandArgs(trailingOnly = FALSE)
 file.arg.name <- "--file="
 script.name <- sub(file.arg.name, "", initial.options[grep(file.arg.name, initial.options)])
 PipeBase <- paste(as.character(unlist(strsplit(script.name,.Platform$file.sep))[-c(length(unlist(strsplit(script.name,.Platform$file.sep)))-1,length(unlist(strsplit(script.name,.Platform$file.sep))))]),collapse=.Platform$file.sep)
-
+print(paste("Running scripts from ",PipeBase,sep=""))
 ## Source Workflow functions 
 source(file.path(PipeBase,"RScripts","Workflow_Functions3.r"))
 #
@@ -26,7 +26,7 @@ ConfigOut <- file.path(WkgDir,"Config","config.ini")
 option_list <- list(
 
 
-  make_option(c("-c","--config"),type="character",help="The pipeline config file",default="/lustre/mib-cri/carrol09/Work/MyPipe/Process10/Config/config.ini"),
+  make_option(c("-c","--config"),type="character",help="The pipeline config file",default=file.path(PipeBase,"Config/config.ini")),
 	make_option(c("-g","--genome"),type="character",help="The desired genome to be used"),
 
 	make_option(c("--workingDirectory"),type="character",help="The desired genome to be used",default=""),
@@ -98,9 +98,9 @@ Res[Res[,2] %in% "tpicsdirectory" & Res[,3] %in% "",3] <- file.path(WkgDir,"Peak
 #}
 
 
+Res[Res[,2] %in% "taskdirectories",3] <- file.path(PipeBase,"src","main",basename(Res[Res[,2] %in% "taskdirectories",3]))
 
-
-AllSections <- unique(Res[,1])[!unique(Res[,1]) %in% c("Custom Scripts","PipeLine_Base")]
+AllSections <- unique(Res[,1])[!unique(Res[,1]) %in% c("Custom Scripts","PipeLine_Base","Pipelines")]
 file.rename(ConfigOut,gsub(".ini","old.ini",ConfigOut))
 file.create(ConfigOut,showWarnings=T)
 for(i in 1:length(AllSections)){
@@ -123,6 +123,21 @@ for(i in 1:length(ScriptSections)){
        ValueWithoutBase  <- as.vector(Res[Res[,1] %in% ScriptSections[i] & Res[,2] %in% VariablesInSection[j],3])
        Temp <- unlist(strsplit(ValueWithoutBase,.Platform$file.sep))
        Value <- file.path(PipeBase,paste(Temp[(grep("Process10",Temp)[1]+1):length(Temp)],collapse=.Platform$file.sep))
+       write.table(paste(Variable,Value,sep=" = "),ConfigOut,col.names=F,row.names=F,quote=F,append=T)      
+  }
+  write.table("",ConfigOut,col.names=F,row.names=F,quote=F,append=T)      
+}
+
+
+pipeSections <- unique(Res[,1])[unique(Res[,1]) %in% "Pipelines"]
+for(i in 1:length(pipeSections)){
+  write.table(paste("[",pipeSections[i],"]",sep=""),ConfigOut,col.names=F,row.names=F,quote=F,append=T)
+  VariablesInSection <- as.vector(Res[Res[,1] %in% pipeSections[i],2])
+  for(j in 1:length(VariablesInSection)){
+       Variable <- VariablesInSection[j]
+       ValueWithoutBase  <- basename(as.vector(Res[Res[,1] %in% pipeSections[i] & Res[,2] %in% VariablesInSection[j],3]))
+       Value <- file.path(PipeBase,"src","main","pipelines",ValueWithoutBase)
+       print(Value)
        write.table(paste(Variable,Value,sep=" = "),ConfigOut,col.names=F,row.names=F,quote=F,append=T)      
   }
   write.table("",ConfigOut,col.names=F,row.names=F,quote=F,append=T)      

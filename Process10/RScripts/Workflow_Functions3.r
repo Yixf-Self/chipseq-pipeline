@@ -290,6 +290,73 @@ GetFlags <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   return(Flags)
 }
 
+GetExecConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  bwa <- ConfigFile[ConfigFile[,2] %in% "bwa",3]
+  python <- ConfigFile[ConfigFile[,2] %in% "python",3]
+  samtools <- ConfigFile[ConfigFile[,2] %in% "samtools",3]
+  picard <- ConfigFile[ConfigFile[,2] %in% "picard",3]
+  perl <- ConfigFile[ConfigFile[,2] %in% "perl",3]
+  rsync <- ConfigFile[ConfigFile[,2] %in% "rsync",3]
+  bedtools <- ConfigFile[ConfigFile[,2] %in% "bedtools",3]
+  java <- ConfigFile[ConfigFile[,2] %in% "java",3]              
+  rexec <- ConfigFile[ConfigFile[,2] %in% "rexec",3]  
+  bigwig <- ConfigFile[ConfigFile[,2] %in% "bigwig",3]  
+  macs <- ConfigFile[ConfigFile[,2] %in% "macs",3]  
+
+  setClass("ExecConfig", representation(
+  bwa = "character",python = "character",samtools = "character",picard= "character",perl= "character",
+  rsync = "character",bedtools = "character",java = "character",rexec = "character",bigwig="character",macs="character"
+  ))
+  PLExec <- new("ExecConfig",
+  bwa = bwa,python = python,samtools = samtools,picard= picard,perl= perl,
+  rsync = rsync,bedtools = bedtools,java = java,rexec = rexec,bigwig=bigwig,macs=macs
+  )
+  return(PLExec)
+}
+getExecPath <- function(ExecToRun,WkgDir=getwd(),Config="Config"){
+   Execs <- GetExecConfig(WkgDir,Config)
+   ExecPath <- slot(Execs,paste(ExecToRun,sep=""))
+   return(ExecPath)
+}
+
+
+GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  mainpipeline <- ConfigFile[ConfigFile[,2] %in% "mainpipeline",3]
+  bamfetchpipeline <- ConfigFile[ConfigFile[,2] %in% "bamfetchpipeline",3]
+  checkgenomepipeline <- ConfigFile[ConfigFile[,2] %in% "checkgenomepipeline",3]
+  fqfetchpipeline <- ConfigFile[ConfigFile[,2] %in% "fqfetchpipeline",3]
+  alignpipeline <- ConfigFile[ConfigFile[,2] %in% "alignpipeline",3]
+  mergingpipeline <- ConfigFile[ConfigFile[,2] %in% "mergingpipeline",3]
+  bamprocesspipeline <- ConfigFile[ConfigFile[,2] %in% "bamprocesspipeline",3]
+  bamprofilepipeline <- ConfigFile[ConfigFile[,2] %in% "bamprofilepipeline",3]
+  macspeakcallpipeline <- ConfigFile[ConfigFile[,2] %in% "macspeakcallpipeline",3]
+  peakprofilepipeline <- ConfigFile[ConfigFile[,2] %in% "peakprofilepipeline",3]
+
+  setClass("PipelinesConfig", representation(
+  mainpipeline = "character",bamfetchpipeline = "character",checkgenomepipeline = "character",fqfetchpipeline = "character",alignpipeline = "character",mergingpipeline = "character",bamprocesspipeline="character",bamprofilepipeline="character",macspeakcallpipeline="character",peakprofilepipeline="character"
+  ))
+  PLPipelines <- new("PipelinesConfig",
+  mainpipeline = mainpipeline,bamfetchpipeline = bamfetchpipeline,checkgenomepipeline = checkgenomepipeline,fqfetchpipeline = fqfetchpipeline,alignpipeline = alignpipeline,mergingpipeline = mergingpipeline,bamprocesspipeline=bamprocesspipeline,
+  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline
+  )
+  return(PLPipelines)
+}
+
+getPipelinesPath <- function(PipelineToRun,WkgDir=getwd(),Config="Config"){
+   Pipelines <- GetPipelinesConfig(WkgDir,Config)
+   PipelinePath <- slot(Pipelines,paste(PipelineToRun,sep=""))
+   return(PipelinePath)
+}
+
 
 GetSampleSheetOrDummy <- function(WkgDir=getwd(),SampleSheet="SampleSheet.csv"){
   if(file.exists(file.path(WkgDir,SampleSheet))){
@@ -430,16 +497,33 @@ GetWorkFlowConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   SummaryFile <- ConfigFile[ConfigFile[,2] %in% "summaryfile",3]
   SummaryErrors <- ConfigFile[ConfigFile[,2] %in% "summaryerrors",3]
   Queue <- ConfigFile[ConfigFile[,2] %in% "queue",3]
+  Executable <- ConfigFile[ConfigFile[,2] %in% "executable",3]
   setClass("WorkFlowConfig", representation(MetaVersion = "character",XSI = "character",SchemaLocation = "character",Mode= "character",Pipeline= "character",
   TaskDirectories = "character",TempDirectory = "character",SummaryFile = "character",SummaryErrors = "character",
-  Queue = "character"
+  Queue = "character",Executable = "character"
   ))
   PLWorkFlow <- new("WorkFlowConfig",MetaVersion=MetaVersion,XSI=XSI,SchemaLocation=SchemaLocation,Mode=Mode,Pipeline=Pipeline,
   TaskDirectories = TaskDirectories,TempDirectory = TempDirectory,SummaryFile = SummaryFile,SummaryErrors = SummaryErrors,
-  Queue = Queue  
+  Queue = Queue,Executable = Executable  
   )
   return(PLWorkFlow)
 }
+
+
+getWorkflowParam <- function(WorkflowToRun,WkgDir=getwd(),Config="Config"){
+   WorkflowParams <- GetWorkFlowConfig(WkgDir,Config)
+   WorkflowParam <- slot(WorkflowParams,paste(WorkflowToRun,sep=""))
+   return(WorkflowParam)
+}
+
+GetPipelinebase <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  PipelineBase <- ConfigFile[ConfigFile[,2] %in% "BaseLocation",3]
+  return(PipelineBase)
+}  
 
 MakeWorkFlowXML<- function(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75){
   require(XML)      
@@ -617,8 +701,18 @@ RefreshSampleSheet <- function(SS=SampleSheet,PLs=PipeLineLocations){
 
 RunSSfetchPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipeLineLocations,Config="Config"){
   
-  Variables  <- file.path(WkgDir,"")
-  names(Variables) <- "WorkingDirectory"
+  Pipeline <- getPipelinesPath("bamfetchpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  rsyncExec <- getExecPath("rsync")
+  
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  
+  
+  Variables  <- c(file.path(WkgDir,""),rsyncExec)
+  names(Variables) <- c("WorkingDirectory","rsync")
   #& SampleSheet[,"Analysis_State"] %in% "RunMe" 
   ToFetch <- SampleSheet[SampleSheet[,"BamLocation"] != "Location_Not_Known"  & SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"BamLocation"] != "Premultiplex" & !is.na(SampleSheet[,"BamLocation"]) & SampleSheet[,"BamLocation"] != "/" & SampleSheet[,"BamLocation"] != "NA",c("GenomicsID","BamLocation")]
   if(length(ToFetch) > 0){
@@ -628,11 +722,11 @@ RunSSfetchPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PL
         names(Specialisations[[i]]) <- c("BamToGet","Bam_Name")  
       } 
       names(Specialisations) <-  paste(as.vector(ToFetch[,"GenomicsID"]),"_fetch",sep="") 
-      Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/BamGettingPipeline.xml"  
+      #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/BamGettingPipeline.xml"  
       PipeName <- "SS_Fetch"
       SSfetch_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
       saveXML(SSfetch_WfMeta,file=file.path(PLs@WorkFlowDir,"SSfetch.xml"))
-      system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SSfetch.xml"),sep=""),wait=T)
+      system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SSfetch.xml"),sep=""),wait=T)
   }
   BamFilesReceived <- dir(path=PLs@BamDir,pattern="*.bam$")
   if(any(grep("Processed",BamFilesReceived))){BamFilesReceived <- BamFilesReceived[-grep("Processed",BamFilesReceived)]}
@@ -656,10 +750,20 @@ return(SampleSheet)
 
 
 RunCheckGenomePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocations,Config="Config"){
+
+  Pipeline <- getPipelinesPath("checkgenomepipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  pipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  
+
    
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
-  Variables  <- c(file.path(WkgDir,""),genome)
-  names(Variables) <- c("WorkingDirectory","genome")
+  Variables  <- c(file.path(WkgDir,""),genome,pythonExec,pipelineBase)
+  names(Variables) <- c("WorkingDirectory","genome","python","pipelineBase")
   
   ToGenomify <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"Source_File"] != "NA" & !is.na(SampleSheet[,"Source_File"]),"Source_File"]
   ToGenomify <- gsub(".bam","",ToGenomify[grep("*.bam",ToGenomify)])
@@ -672,11 +776,11 @@ RunCheckGenomePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
     } 
     names(Specialisations) <-  paste(as.vector(gsub("\\.bwa.*","",ToGenomify)),"_genomeCheck",sep="") 
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MultiGenomeGetterPipe.xml"  
+#    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MultiGenomeGetterPipe.xml"  
     PipeName <- "SS_GenomeCheck"
     SSCheckGenome_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSCheckGenome_WfMeta,file=file.path(PLs@WorkFlowDir,"SSCheckGenome.xml"))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SSCheckGenome.xml"),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SSCheckGenome.xml"),sep=""),wait=T)
   }
     files <- dir(path=PLs@BamDir,pattern="*.info",full.names = T)
     Genomes <- vector("character",length=length(files))
@@ -712,12 +816,22 @@ RunCheckGenomePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
 
 RunSSfqfetchPipeline <- function(SampleToGrab=BamsToRealign,SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipeLineLocations,Config="Config"){
 
+  Pipeline <- getPipelinesPath("fqfetchpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  rsyncExec <- getExecPath("rsync")
+  
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  
+
   SampleSheet[SampleSheet[,"BamLocation"] %in% c("/","NA"," "),"BamLocation"] <- "Location_Not_Known" 
   SampleSheet[SampleSheet[,"FQLocation"] %in% c("/","NA"," "),"FQLocation"] <- "Location_Not_Known" 
   
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
-  Variables  <- c(file.path(WkgDir,""))
-  names(Variables) <- c("WorkingDirectory")
+  Variables  <- c(file.path(WkgDir,""),rsyncExec)
+  names(Variables) <- c("WorkingDirectory","rsync")
   
   ToGrab <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"GenomicsID"] %in% SampleToGrab & !SampleSheet[,"FQLocation"] %in% "Location_Not_Known","FQLocation"]
   NameToGrab <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"GenomicsID"] %in% SampleToGrab  & !SampleSheet[,"FQLocation"] %in% "Location_Not_Known","GenomicsID"]
@@ -746,11 +860,11 @@ RunSSfqfetchPipeline <- function(SampleToGrab=BamsToRealign,SampleSheet,WkgDir=W
     } 
     names(Specialisations) <-  paste(as.vector(gsub("\\.bwa.*","",NameToGrab)),"_FQFetch",sep="") 
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/FQGettingPipeline.xml"  
+    #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/FQGettingPipeline.xml"  
     PipeName <- "SS_FQFetch"
     SSFQFetch_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSFQFetch_WfMeta,file=file.path(PLs@WorkFlowDir,"SSFQFetch.xml"))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SSFQFetch.xml"),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SSFQFetch.xml"),sep=""),wait=T)
   }
   FQFilesDirs <- list.dirs(path=PLs@FQDir,recursive=F)
   BaseFQDirs  <-  basename(FQFilesDirs)
@@ -823,16 +937,41 @@ RunSSdeMultiplesPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs
 }
 
 RunSSRealignmentPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipeLineLocations,Config="Config"){
+
+
+  Pipeline <- getPipelinesPath("alignpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  bwaExec <- getExecPath("bwa")
+  pythonExec <- getExecPath("python")
+  samtoolsExec <- getExecPath("samtools")  
+  picardExec <- getExecPath("picard")    
+
+  
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+
   RemainderSheet <- SampleSheet[!SampleSheet[,"Analysis_State"] %in% "RunMe",]
   SampleSheet <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe",]
-  SampleSheetOfThoseToAlign <- SampleSheet[grep("fq$|.gz$|.gz$",SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe","Source_File"]),]
-  SampleSheetOfThoseToAlign <- SampleSheetOfThoseToAlign[!is.na(SampleSheetOfThoseToAlign[,"Source_File"]) & !SampleSheetOfThoseToAlign[,"Source_File"] %in% "NA",]
+
+  if(length(grep("fq$|.gz$|.gz$",SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe","Source_File"])) > 1){   
+    SampleSheetOfThoseToAlign <- SampleSheet[grep("fq$|.gz$|.gz$",SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe","Source_File"]),]
+    SampleSheetOfThoseToAlign <- SampleSheetOfThoseToAlign[!is.na(SampleSheetOfThoseToAlign[,"Source_File"]) & !SampleSheetOfThoseToAlign[,"Source_File"] %in% "NA",]
+  }else{
+    SampleSheetOfThoseToAlign <- matrix(SampleSheet[grep("fq$|.gz$|.gz$",SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe","Source_File"]),],ncol=ncol(SampleSheet))
+    colnames(SampleSheetOfThoseToAlign) <- colnames(SampleSheet)
+    SampleSheetOfThoseToAlign <- matrix(SampleSheetOfThoseToAlign[!is.na(SampleSheetOfThoseToAlign[,"Source_File"]) & !SampleSheetOfThoseToAlign[,"Source_File"] %in% "NA",],ncol=ncol(SampleSheet))
+    colnames(SampleSheetOfThoseToAlign) <- colnames(SampleSheet)    
+  }
+
+
   TargetGenome <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config")
   GenomeBuild <- GetGenomeBuildFromConfig(WkgDir,ConfigDirectory="Config")
   Specialisations  <- vector("list")
   
-  Variables <- c(WkgDir,PLs@FQDir,TargetGenome,GenomeBuild)
-  names(Variables) <- c("WorkingDirectory","FQDirectory","GenomeBuild","Genome")
+  Variables <- c(WkgDir,PLs@FQDir,TargetGenome,GenomeBuild,bwaExec,pythonExec,javaExec,samtoolsExec,PipelineBase,picardExec)
+  names(Variables) <- c("WorkingDirectory","FQDirectory","GenomeBuild","Genome","bwa","python","java","samtools","pipelineBase","picard")
   if(nrow(SampleSheetOfThoseToAlign) > 0){ 
     for(i in 1:nrow(SampleSheetOfThoseToAlign)){
       SampleID <- SampleSheetOfThoseToAlign[i,"GenomicsID"]
@@ -841,11 +980,11 @@ RunSSRealignmentPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs
       names(Specialisations[[length(Specialisations)]]) <- c("Test","FastaFile")  
     }
      names(Specialisations) <- seq(1,length(Specialisations))  
-     Pipeline <- "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/ReAlignPipeline.xml"
+#     Pipeline <- "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/ReAlignPipeline.xml"
      PipeName <- "Alignment"
      SSRealignment_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
      saveXML(SSRealignment_WfMeta,file=file.path(PLs@WorkFlowDir,"SSAlignment.xml"))
-     system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SSAlignment.xml"),sep=""),wait=T)
+     system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SSAlignment.xml"),sep=""),wait=T)
    }
    if(nrow(SampleSheet) > 0){
      for(i in 1:nrow(SampleSheet)){
@@ -861,6 +1000,17 @@ RunSSRealignmentPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs
      
 }
 RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipeLineLocations,Config="Config"){
+
+  Pipeline <- getPipelinesPath("mergingpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  picardExec <- getExecPath("picard")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+
+
+
     UniquedMergedFiles <-  as.vector(unique(na.omit(SampleSheet[,"toMerge"])))
     MoreThan1Sample <- names(table(na.omit(SampleSheet[,"SampleName"])))[table(na.omit(SampleSheet[,"SampleName"])) > 1]
     AllSamplesPresent <- as.vector(unique(na.omit(SampleSheet[,"GenomicsID"])))
@@ -912,8 +1062,8 @@ RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
     InputLists <- c(InputLists,InputLists2)
     OutputNames <- c(OutputNames,OutputNames2)
     }
-    Variables <- c(WkgDir)
-    names(Variables) <- c("WorkingDirectory")
+    Variables <- c(WkgDir,picardExec,javaExec)
+    names(Variables) <- c("WorkingDirectory","picard","java")
     Specialisations  <- vector("list")
   if(length(InputLists) > 0){       
     for(i in 1:length(InputLists)){   
@@ -926,11 +1076,11 @@ RunSSMergingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
     }
     if(length(Specialisations) > 0){
      names(Specialisations) <- seq(1,length(Specialisations))  
-     Pipeline <- "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MergingPipeline.xml"
+#     Pipeline <- "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MergingPipeline.xml"
      PipeName <- "Merging"
      SSMerge_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
      saveXML(SSMerge_WfMeta,file=file.path(PLs@WorkFlowDir,"SSMerging.xml"))
-     system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SSMerging.xml"),sep=""),wait=T)
+     system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SSMerging.xml"),sep=""),wait=T)
      for(i in 1:length(OutputNames)){
      TempMatrix <- matrix(nrow=length(OutputNames),ncol=ncol(SampleSheet),data=NA)
      colnames(TempMatrix) <- colnames(SampleSheet)
@@ -955,12 +1105,22 @@ RunBamProcessPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
    
 #  genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
 
+  Pipeline <- getPipelinesPath("bamprocesspipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rExec <- getExecPath("rexec")
+
+
   MapQFlag <- GetMapQFlag(WkgDir,Config)
   DupFlag <- GetDupFlag(WkgDir,Config)
   ExcludedFlag <- GetExcludedFlag(WkgDir,Config)  
   
-  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,"Dummy",DupFlag,ExcludedFlag,MapQFlag)
-  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeFile","DupFlag","ExcludedFlag","MapQFlag")
+  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,"Dummy",DupFlag,ExcludedFlag,MapQFlag,pythonExec,PipelineBase,rExec)
+  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeFile","DupFlag","ExcludedFlag","MapQFlag","python","pipelineBase","rexec")
   
   BamFiles <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & !SampleSheet[,"Source_File"] %in% "NA" & !is.na(SampleSheet[,"Source_File"]) & grepl(".bam",SampleSheet[,"Source_File"]) & !grepl("_Processed.bam",SampleSheet[,"Source_File"]),"Source_File"]
   BamFiles <- gsub(".bam","",BamFiles)
@@ -978,11 +1138,11 @@ RunBamProcessPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
     names(Specialisations) <-  paste(as.vector(gsub("\\.bwa.*","",BamFiles)),"_bamProcess",sep="") 
     #Specialisations[[1]] <- "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20121114_MontoyaAR_DN_Hes6ChIP/bamFiles/ID-LNCAP-LM-HES6-BICALUTAMIDE-INPUT-D26.bwa.bam"
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/BamProcessPipeline.xml"  
+#    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/BamProcessPipeline.xml"  
     PipeName <- "SS_BamProcess"
     SSBamProcess_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSBamProcess_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_BamProcess.xml"))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SS_BamProcess.xml"),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SS_BamProcess.xml"),sep=""),wait=T)
   }
   fileLogs <- dir(path=PLs@BamDir,pattern="_fileLog.log",full.names = F)
   fileLogsFull <- dir(path=PLs@BamDir,pattern="_fileLog.log",full.names = T)  
@@ -1049,13 +1209,27 @@ RunBamProcessPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
 
 
 RunBamProfilePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocations,Config="Config"){
+
+
+  Pipeline <- getPipelinesPath("bamprofilepipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rexec <- getExecPath("rexec")
+  bedtools <- getExecPath("bedtools")
+  BigWig <- getExecPath("bigwig")
+
+
    
    genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config") 
    genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
    
 #  genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
-  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,genome,genomeChrLengths)
-  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeName","genomeFile")
+  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,genome,genomeChrLengths,BigWig,bedtools,rexec,PipelineBase)
+  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeName","genomeFile","BigWig","bedtools","rexec","pipelineBase")
   
   BamProfileFiles <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"Processed_bamFileName"] != "NA" & !is.na(SampleSheet[,"Processed_bamFileName"]) & grepl(".bam",SampleSheet[,"Processed_bamFileName"]),"Processed_bamFileName"]
   BamProfileFiles <- gsub(".bam","",BamProfileFiles)
@@ -1067,11 +1241,11 @@ RunBamProfilePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
   } 
   names(Specialisations) <-  paste(as.vector(gsub("\\.bwa.*","",BamProfileFiles)),"_bamProcess",sep="") 
 
-  Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MultiBamProcessPipeline_P2.xml"  
+#  Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MultiBamProcessPipeline_P2.xml"  
   PipeName <- "SS_BamProfile"
   SSBamProfile_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
   saveXML(SSBamProfile_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_BamProfile.xml"))
-  system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SS_BamProfile.xml"),sep=""),wait=T)
+  system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SS_BamProfile.xml"),sep=""),wait=T)
 
     SampleSheet <- ReadAndLock(file.path(WkgDir,"SampleSheet.csv"),WkdDir,SAF=T,napTime=5)
   
@@ -1144,6 +1318,19 @@ if(CallPeaksCheck("Macs",WkgDir,Config)){
    Mfold <- getMacsmfold(WkgDir,ConfigDirectory="Config")
    MacsGenome = getMacsGenome(WkgDir,ConfigDirectory="Config")
    ShiftSizeDefault = getMacsShiftSize(WkgDir,ConfigDirectory="Config")    
+
+  Pipeline <- getPipelinesPath("macspeakcallpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rexec <- getExecPath("rexec")
+  bedtools <- getExecPath("bedtools")
+  BigWig <- getExecPath("bigwig")
+  macs <- getExecPath("macs")
+
    
 
    
@@ -1162,8 +1349,8 @@ if(CallPeaksCheck("Macs",WkgDir,Config)){
 
    SamplesAndInputs[SamplesAndInputs[,3] %in% "Too_few_Reads_To_Calculate" | SamplesAndInputs[,3] %in% "No_Information_Available" |  is.na(SamplesAndInputs[,3]),3] <-  ShiftSizeDefault
 
-  Variables  <- c(file.path(PLs@MacsDir,""),file.path(PLs@BamDir,""),MacsGenome,Mfold)
-  names(Variables) <- c("Macs_Directory","BamDirectory","Genome","Mfold")
+  Variables  <- c(file.path(PLs@MacsDir,""),file.path(PLs@BamDir,""),MacsGenome,Mfold,macs,rexec)
+  names(Variables) <- c("Macs_Directory","BamDirectory","Genome","Mfold","macs","rexec")
   
 
   if(nrow(SamplesAndInputs) > 0){
@@ -1174,11 +1361,11 @@ if(CallPeaksCheck("Macs",WkgDir,Config)){
     } 
     names(Specialisations) <-  paste(as.vector(SamplesAndInputs[,1]),"_MacsPeakCall",sep="") 
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MacsPeakCallingPipeline.xml"  
+    #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MacsPeakCallingPipeline.xml"  
     PipeName <- "SS_MacsPeak"
     SSMacsPeak_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSMacsPeak_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_MacsPeak.xml"))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SS_MacsPeak.xml"),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SS_MacsPeak.xml"),sep=""),wait=T)
 }
 
 
@@ -1386,11 +1573,24 @@ if(CallProfilesCheck(Caller,WkgDir,Config)){
   }   
   BamDir <- PLs@BamDir
   
+
+  Pipeline <- getPipelinesPath("peakprofilepipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rexec <- getExecPath("rexec")
+  bedtools <- getExecPath("bedtools")
+ 
+  
+  
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config") 
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
   fastaFromGenome <- GetGenomeBuildFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome)
-  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","fastafile")
+  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,bedtools,rexec,PipelineBase)
+  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","fastafile","bedtools","rexec","pipelineBase")
   
   JustOfInterest <- SampleSheet[!is.na(SampleSheet[,PeakFileNameColumn]) & !SampleSheet[,PeakFileNameColumn] %in% "NA",]
 
@@ -1403,11 +1603,11 @@ if(CallProfilesCheck(Caller,WkgDir,Config)){
     } 
     names(Specialisations) <-  paste(as.vector(JustOfInterest[,1]),paste("_",Caller,"PeakCall",sep=""),sep="") 
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/PeakProfilingPipeline2.xml"  
+    #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/PeakProfilingPipeline2.xml"  
     PipeName <- paste("SS_",Caller,"PeakProfile",sep="")
     SSPeakProfile_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSPeakProfile_WfMeta,file=file.path(PLs@WorkFlowDir,paste("SS_",Caller,"PeakProfile.xml",sep="")))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,paste("SS_",Caller,"PeakProfile.xml",sep="")),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,paste("SS_",Caller,"PeakProfile.xml",sep="")),sep=""),wait=T)
   }
 #if(Caller %in% "Macs"){
       SampleSheet <- ReadAndLock(file.path(WkgDir,"SampleSheet.csv"),WkdDir,SAF=F,napTime=5)
@@ -1790,7 +1990,14 @@ TopPeaksByRank <- function(InFile,OutFile,RankColumn,RankOrder,NPeaks){
 RunMainPipeline <- function(WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocations,Config="Config"){
    
 #  genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
-
+  #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MainPipeline2.xml"
+  Pipeline <- getPipelinesPath("mainpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  R_executable <- getExecPath("rexec")  
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   WorkFlowDirectory <- PLs@WorkFlowDir
   Config2 <- file.path(WkgDir,Config,"config.ini")
   R_executable <- "/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript"
@@ -1799,12 +2006,11 @@ RunMainPipeline <- function(WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocat
   names(Variables) <- c("WorkflowDir","PathwayTracker","Config","R_Executable")
   Specialisations <- vector("list")
   #Specialisations[[1]] <- "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20121114_MontoyaAR_DN_Hes6ChIP/bamFiles/ID-LNCAP-LM-HES6-BICALUTAMIDE-INPUT-D26.bwa.bam"
-
-  Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MainPipeline2.xml"  
+  
   PipeName <- "Main"
   Main_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
   saveXML(Main_WfMeta,file=file.path(PLs@WorkFlowDir,"Main.xml"))
-  system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"Main.xml"),sep=""),wait=T)
+  system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"Main.xml"),sep=""),wait=T)
 
 }
 
