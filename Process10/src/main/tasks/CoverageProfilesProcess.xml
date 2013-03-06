@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 #	mkdir -p ${TheDirectory}/FeatureProfiles
-	coverageBed -hist -abam ${bam} -b ${bed} > ${hist}
+	${bedtools}/coverageBed -hist -abam ${bam} -b ${bed} > ${hist}
 	</executable>
     </program>
 
@@ -24,6 +24,7 @@
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
+	<arg name="bedtools" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Coverage
-	genomeCoverageBed -ibam ${bam_processed} -g ${genome} > ${Histogram}
+	${bedtools}/genomeCoverageBed -ibam ${bam_processed} -g ${genome} > ${Histogram}
 	</executable>
     </program>
 
@@ -25,6 +25,7 @@
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
+	<arg name="bedtools" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

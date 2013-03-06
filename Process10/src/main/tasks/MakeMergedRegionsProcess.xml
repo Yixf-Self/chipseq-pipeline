@@ -10,7 +10,7 @@
         <executable>
 
 	mkdir -p ${TheDirectory}/Peaks/PeakProfiles
-	/lustre/mib-cri/carrol09/Work/MyPipe/BedtoolsForPipe/BEDTools-Version-2.16.2/bin/slopBed -i ${bed} -g ${genomeFile} -b ${ReadLength} | mergeBed  -i stdin > ${mergedpeakbed}
+	${bedtools}/slopBed -i ${bed} -g ${genomeFile} -b ${ReadLength} | mergeBed  -i stdin > ${mergedpeakbed}
 	</executable>
     </program>
 
@@ -27,5 +27,6 @@
      <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
 	<arg name="ReadLength" required="true" description="Working Directory"/>
+	<arg name="bedtools" required="true" description="Working Directory"/>
    	 </arguments>
 </task:task>

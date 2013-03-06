@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 		export R_LIBS='/home/mib-cri/local/lib64/R/library'
-		/home/mib-cri/local/lib64/R/bin/Rscript /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/CountingInFeatures.r ${genomeName} ${bam_processed} ${TheDirectory}
+		${rexec} ${pipelineBase}/RScripts/CountingInFeatures.r ${genomeName} ${bam_processed} ${TheDirectory}
 	</executable>
     </program>
 
@@ -25,6 +25,8 @@
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
         <arg name="genomeName" required="true" description="genome." />
+        <arg name="rexec" required="true" description="genome." />
+        <arg name="pipelineBase" required="true" description="genome." />
     </arguments>
 
 </task:task>

@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Coverage
-	/lustre/mib-cri/carrol09/MyPipe/BigWig/bedGraphToBigWig ${Wig} ${genome} ${BigBed}
+	${BigWig} ${Wig} ${genome} ${BigBed}
 	</executable>
     </program>
 
@@ -25,6 +25,7 @@
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
+	<arg name="BigWig" required="true" description="BigWig executable"/>
     </arguments>
 
 </task:task>

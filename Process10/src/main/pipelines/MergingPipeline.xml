@@ -25,6 +25,8 @@
     	    <arg name="InputVector">${InputName}</arg>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
 	    <arg name="OutputName">${OutName}</arg>
+    	    <arg name="picard">${picard}</arg>
+	    <arg name="java">${java}</arg>
     	</arguments> 
             
 	</task>
@@ -46,6 +48,8 @@
     	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
 	    <arg name="OutputName">${OutName}</arg>
+    	    <arg name="picard">${picard}</arg>
+	    <arg name="java">${java}</arg>
     	</arguments> 
 	</task>
 

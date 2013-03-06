@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	java -Xmx8g -jar /lustre/mib-cri/carrol09/Picard/MarkDuplicates.jar INPUT=${MergedFile} ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${OutputName}.bwa.bam METRICS_FILE=${TheDirectory}/bamFiles/${OutputName}.metrics VALIDATION_STRINGENCY=SILENT
+	${java} -Xmx8g -jar ${picard}/MarkDuplicates.jar INPUT=${MergedFile} ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${OutputName}.bwa.bam METRICS_FILE=${TheDirectory}/bamFiles/${OutputName}.metrics VALIDATION_STRINGENCY=SILENT
 	rm ${TheDirectory}/bamFiles/${OutputName}.metrics
 	rm ${MergedFile}
 	</executable>
@@ -24,6 +24,8 @@
     <arguments>
 	<arg name="TheDirectory" required="true" description="Name for Macs output"/>
 	<arg name="OutputName" required="true" description="Name for Macs output"/>
+       <arg name="picard" required="true" description="picard exec"/>
+	<arg name="java" required="true" description="java exec"/>
     </arguments>
 
 </task:task>

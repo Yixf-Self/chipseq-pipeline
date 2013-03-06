@@ -10,7 +10,7 @@
         <executable>
 	mkdir -p ${TheDirectory}/Fragment_Lengths
 	export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
-	/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/CrossCorrStuff.r  ${bam_Proc} ${TheDirectory} 
+	${rexec} --vanilla ${pipelineBase}/RScripts/CrossCorrStuff.r  ${bam_Proc} ${TheDirectory} 
 	</executable>
     </program>
 
@@ -24,6 +24,8 @@
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
+	<arg name="rexec" required="true" description="R executable"/>
+	<arg name="pipelineBase" required="true" description="pipeline base"/>
     </arguments>
 
 </task:task>

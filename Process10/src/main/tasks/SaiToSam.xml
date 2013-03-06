@@ -8,23 +8,24 @@
 
     <program type="commandLine">
         <executable>
-	/home/mib-cri/software/bwa/bwa-0.5.9/bwa samse  ${Genome} ${SaiFile} ${FastQ} > ${sam}
+	${bwa} samse  ${Genome} ${SaiFile} ${FastQ} > ${sam}
 	</executable>
     </program>
 
     <inputs>
-        <input name="FastQ" required="true" description="The Bam file." />
-        <input name="SaiFile" required="true" description="The Bam file." />
+        <input name="FastQ" required="true" description="The FQ file." />
+        <input name="SaiFile" required="true" description="The sai file." />
     </inputs>
 
     <outputs>
-        <output name="sam" required="true" safeNaming="false" description="Bam processes by pipeline" />
+        <output name="sam" required="true" safeNaming="false" description="Sam realigned by pipeline" />
     </outputs>
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
 	<arg name="Genome" required="true" description="Working Directory"/>
 	<arg name="Test" required="true" description="Working Directory"/>
+	<arg name="bwa" required="true" description="bwa exec"/>
     </arguments>
 
 </task:task>

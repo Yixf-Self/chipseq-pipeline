@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	complementBed  -i ${bed} -g ${genomeFile} > ${compbed}
+	${bedtools}/complementBed  -i ${bed} -g ${genomeFile} > ${compbed}
 	</executable>
     </program>
 
@@ -23,6 +23,7 @@
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
+	<arg name="bedtools" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

@@ -31,7 +31,7 @@
                 <output name="Macs_PeaksInput" deleteOnFailure="false">${Macs_Directory}/${Test}_negative_peaks.xls</output>
             </outputs>
     	<arguments>
-	    <arg name="Macs_Executable">/lustre/mib-cri/carrol09/MyPipe/PeakCallers/MACS-1.4.1/bin/macs14</arg>		
+	    <arg name="Macs_Executable">${macs}</arg>		
     	    <arg name="OutputName">${Macs_Directory}${Test}</arg>
 	    <arg name="Macs_Directory">${Macs_Directory}</arg>
 	    <arg name="GenomeForMacs">${Genome}</arg>
@@ -58,7 +58,7 @@
             
 
     	<arguments>
-	    <arg name="R_Executable">/home/mib-cri/local/bin/Rscript</arg>		
+	    <arg name="R_Executable">${rexec}</arg>		
     	</arguments> 
 	</task>
 

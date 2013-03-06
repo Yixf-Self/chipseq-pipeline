@@ -25,5 +25,7 @@
 
      <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
-   	 </arguments>
+	<arg name="rexec" required="true" description="Working Directory"/>
+	<arg name="pipelineBase" required="true" description="Working Directory"/>
+     </arguments>
 </task:task>

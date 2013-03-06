@@ -26,6 +26,8 @@
     	    <arg name="BamToGrab">${BamToGet}</arg>
 	    <arg name="BamName">${Bam_Name}</arg>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	    <arg name="rsync">${rsync}</arg>
+
     	</arguments> 
             
 	</task>

@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Coverage
-	/lustre/mib-cri/carrol09/python/PythonInstall/bin/python2.7 /lustre/mib-cri/carrol09/Work/MyPipe/Process10/PythonScripts/CRI_BamProcess.py ${bam} ${genome} ${excludedfile} ${seqdict} ${ExcludedFlag} ${DupFlag} ${MapQFlag}
+	${python} ${pipelineBase}/PythonScripts/CRI_BamProcess.py ${bam} ${genome} ${excludedfile} ${seqdict} ${ExcludedFlag} ${DupFlag} ${MapQFlag}
 	</executable>
     </program>
 
@@ -30,7 +30,8 @@
 	<arg name="ExcludedFlag" required="true" description="Excluded Flag"/>
 	<arg name="DupFlag" required="true" description="Duplication Flag"/>
 	<arg name="MapQFlag" required="true" description="MapQ Flag"/>
-
+	<arg name="python" required="true" description="python executable"/>
+	<arg name="pipelineBase" required="true" description="pipeline base"/>
     </arguments>
 
 </task:task>

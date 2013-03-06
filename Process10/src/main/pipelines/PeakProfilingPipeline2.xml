@@ -29,7 +29,9 @@
 
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>
-    	        <arg name="ReadLength">${ReadLength}</arg>		
+    	        <arg name="ReadLength">${ReadLength}</arg>
+    	        <arg name="bedtools">${bedtools}</arg>
+				
 	</arguments> 
  
       </task>
@@ -50,6 +52,8 @@
     	<arguments>
 	    <arg name="TheDirectory">${WorkingDirectory}</arg>
 	    <arg name="genome">${genome}</arg>
+	    <arg name="rexec">${rexec}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -77,7 +81,9 @@
        </outputs>
 
        <arguments>
-    	        <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	     <arg name="TheDirectory">${WorkingDirectory}</arg>
+	    <arg name="rexec">${rexec}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
 	</arguments> 
  
       </task>
@@ -103,7 +109,8 @@
        </outputs>
 
        <arguments>
-    	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+    	        <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	        <arg name="bedtools">${bedtools}</arg>		
 	</arguments> 
  
       </task>
@@ -130,6 +137,7 @@
 
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+    	        <arg name="bedtools">${bedtools}</arg>
 	</arguments> 
  
       </task>
@@ -155,6 +163,7 @@
 
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+    	        <arg name="bedtools">${bedtools}</arg>
 	</arguments> 
  
       </task>
@@ -180,6 +189,7 @@
 
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+    	        <arg name="bedtools">${bedtools}</arg>
 	</arguments> 
  
       </task>
@@ -206,6 +216,7 @@
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>	
     	        <arg name="strand">+</arg>	
+    	        <arg name="bedtools">${bedtools}</arg>
 	</arguments> 
  
       </task>
@@ -232,6 +243,7 @@
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>	
     	        <arg name="strand">-</arg>	
+    	        <arg name="bedtools">${bedtools}</arg>
 	</arguments> 
  
       </task>
@@ -257,7 +269,8 @@
        </outputs>
 
        <arguments>
-    	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+    	        <arg name="TheDirectory">${WorkingDirectory}</arg>	
+    	        <arg name="bedtools">${bedtools}</arg>	
 	</arguments> 
  
       </task>
@@ -283,6 +296,7 @@
 
        <arguments>
     	        <arg name="TheDirectory">${WorkingDirectory}</arg>		
+    	        <arg name="bedtools">${bedtools}</arg>
 	</arguments> 
  
       </task>

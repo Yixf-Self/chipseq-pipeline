@@ -8,24 +8,26 @@
 
     <program type="commandLine">
         <executable>
-	java -Xmx4g -jar /lustre/mib-cri/carrol09/Picard/MarkDuplicates.jar INPUT=${TheDirectory}/FQFiles/${Test}_Rehead.bam ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${Test}.bwa.Realigned${GenomeBuild}.bam METRICS_FILE=${TheDirectory}/bamFiles/${Test}.bam.metrics VALIDATION_STRINGENCY=SILENT
+	${java} -Xmx4g -jar ${picard}/MarkDuplicates.jar INPUT=${TheDirectory}/FQFiles/${Test}_Rehead.bam ASSUME_SORTED=true OUTPUT=${TheDirectory}/bamFiles/${Test}.bwa.Realigned${GenomeBuild}.bam METRICS_FILE=${TheDirectory}/bamFiles/${Test}.bam.metrics VALIDATION_STRINGENCY=SILENT
 	rm ${TheDirectory}/bamFiles/${Test}.bam.metrics
 
 	</executable>
     </program>
 	<inputs>
-		 <input name="MergedFile"/>
+		<input name="MergedFile"/>
 	</inputs>
 	
-    <outputs>
-        <output name="MarkedFile" required="true" safeNaming="false" description="MarkedFile by pipeline" />
-    </outputs>
+    	<outputs>
+        	<output name="MarkedFile" required="true" safeNaming="false" description="MarkedFile by pipeline" />
+    	</outputs>
 
-    <arguments>
-	<arg name="TheDirectory" required="true" description="Name for Macs output"/>
-	<arg name="OutputName" required="true" description="Name for Macs output"/>
-    	<arg name="GenomeBuild" required="true" description="Name for Macs output"/>
-	<arg name="Test" required="true" description="Name for Macs output"/>
-    </arguments>
+    	<arguments>
+		<arg name="TheDirectory" required="true" description="Working directory"/>
+		<arg name="OutputName" required="true" description="The marked file"/>
+    		<arg name="GenomeBuild" required="true" description="The genome build"/>
+		<arg name="Test" required="true" description="Name for Macs output"/>
+		<arg name="java" required="true" description="java exec"/>
+		<arg name="picard" required="true" description="picard exec"/>
+    	</arguments>
 
 </task:task>

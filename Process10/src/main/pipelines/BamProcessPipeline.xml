@@ -32,6 +32,9 @@
    	    <arg name="ExcludedFlag">${ExcludedFlag}</arg>
    	    <arg name="DupFlag">${DupFlag}</arg>
    	    <arg name="MapQFlag">${MapQFlag}</arg>
+   	    <arg name="python">${python}</arg>
+   	    <arg name="pipelineBase">${pipelineBase}</arg>
+
     	</arguments> 
          </task>
 
@@ -60,6 +63,8 @@
 				
 				<arguments>
 			    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+			    	    <arg name="rexec">${rexec}</arg>
+			   	    <arg name="pipelineBase">${pipelineBase}</arg>
 				</arguments> 
 			
 	        </task>
@@ -79,6 +84,8 @@
 				
 				<arguments>
 			    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+			    	    <arg name="rexec">${rexec}</arg>
+			   	    <arg name="pipelineBase">${pipelineBase}</arg>
 				</arguments> 
 			
 	        </task>

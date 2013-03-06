@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
-	/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/RGOAnno3.r ${genome} ${Peaks} ${AnnotatedPeaks} ${SummaryAnnotation} ${EnrichmentFile}
+	${rexec} ${pipelineBase}/RScripts/RGOAnno3.r ${genome} ${Peaks} ${AnnotatedPeaks} ${SummaryAnnotation} ${EnrichmentFile}
 	</executable>
     </program>
 
@@ -27,6 +27,8 @@
     <arguments>
        <arg name="genome" required="true" description="genome." />
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
+	<arg name="rexec" required="true" description="Working Directory"/>
+	<arg name="pipelineBase" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

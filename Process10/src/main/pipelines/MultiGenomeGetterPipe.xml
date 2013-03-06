@@ -27,6 +27,8 @@
 
 		<arguments>
    			<arg name="TargetGenome">${genome}</arg>
+   			<arg name="python">${python}</arg>
+   			<arg name="pipelineBase">${pipelineBase}</arg>
 		</arguments>
 
                 </task>

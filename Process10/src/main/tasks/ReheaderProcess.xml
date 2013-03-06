@@ -8,8 +8,8 @@
 
     <program type="commandLine">
         <executable>
-	 /lustre/mib-cri/carrol09/python/PythonInstall/bin/python2.7 /lustre/mib-cri/carrol09/Work/MyPipe/Process10/PythonScripts/CRIReheader.py  ${InputFile} ${GenomeBuild} 
-	/lustre/mib-cri/carrol09/Samtools/samtools-0.1.18/samtools reheader ${ReAlignDirectory}/${Name}_Sorted_Temphead.sam ${InputFile} > ${ReAlignDirectory}/${Name}_Rehead.bam
+	 ${python} ${pipelineBase}/PythonScripts/CRIReheader.py  ${InputFile} ${GenomeBuild} 
+	 ${samtools} reheader ${ReAlignDirectory}/${Name}_Sorted_Temphead.sam ${InputFile} > ${ReAlignDirectory}/${Name}_Rehead.bam
 	</executable>
     </program>
 
@@ -22,10 +22,14 @@
     </outputs>
 
     <arguments>
-	<arg name="TheDirectory" required="true" description="Name for Macs output"/>
-  		<arg name="Name" required="true" description="Name for Macs output"/>
-    		<arg name="GenomeBuild" required="true" description="Name for Macs output"/>
-    		<arg name="ReAlignDirectory" required="true" description="Name for Macs output"/>
+	<arg name="TheDirectory" required="true" description="The working directory"/>
+  		<arg name="Name" required="true" description="Name of reheaded file"/>
+    		<arg name="GenomeBuild" required="true" description="Genome build"/>
+    		<arg name="ReAlignDirectory" required="true" description="Directory for realignment"/>
+    		<arg name="samtools" required="true" description="samtools exec "/>
+    		<arg name="python" required="true" description="python exec"/>
+    		<arg name="pipelineBase" required="true" description="pipelineBase"/>
+		
 
     </arguments>
 

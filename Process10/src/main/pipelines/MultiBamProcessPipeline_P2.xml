@@ -57,6 +57,7 @@
 
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	    <arg name="bedtools">${bedtools}</arg>
     	</arguments> 
 
 
@@ -78,6 +79,7 @@
 
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	    <arg name="bedtools">${bedtools}</arg>
     	</arguments> 
 
                </task>
@@ -97,6 +99,8 @@
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
            <arg name="genomeName">${genomeName}</arg>
+           <arg name="rexec">${rexec}</arg>
+           <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
                </task>
 
@@ -117,6 +121,8 @@
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
            <arg name="genomeName">${genomeName}</arg>
+	    <arg name="rexec">${rexec}</arg>
+           <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
                </task>
 
@@ -137,6 +143,8 @@
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}/Coverage/</arg>
            <arg name="genomeName">${genomeName}</arg>
+	    <arg name="rexec">${rexec}</arg>
+           <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
 
 
@@ -185,6 +193,7 @@
 
 	<arguments>
     	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+    	    <arg name="BigWig">${BigWig}</arg>
     	</arguments> 
 
 	        </task>

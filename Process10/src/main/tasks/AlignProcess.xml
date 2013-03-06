@@ -8,22 +8,23 @@
 
     <program type="commandLine">
         <executable>
-	/home/mib-cri/software/bwa/bwa-0.5.9/bwa aln  -t 4 ${Genome} ${FastQ} > ${SaiFile}
+	${bwa} aln  -t 4 ${Genome} ${FastQ} > ${SaiFile}
 	</executable>
     </program>
 
     <inputs>
-        <input name="FastQ" required="true" description="The Bam file." />
+        <input name="FastQ" required="true" description="The FQ file." />
     </inputs>
 
     <outputs>
-        <output name="SaiFile" required="true" safeNaming="false" description="Bam processes by pipeline" />
+        <output name="SaiFile" required="true" safeNaming="false" description="sai file from alignment by pipeline" />
     </outputs>
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
-	<arg name="Genome" required="true" description="Working Directory"/>
-	<arg name="Test" required="true" description="Working Directory"/>
+	<arg name="Genome" required="true" description="Genome to align to"/>
+	<arg name="Test" required="true" description="not sure..."/>
+	<arg name="bwa" required="true" description="bwa exec"/>
     </arguments>
 
 </task:task>

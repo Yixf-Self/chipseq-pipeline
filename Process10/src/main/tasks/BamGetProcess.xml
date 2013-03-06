@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}heloo
-	rsync -av ${BamToGrab} ${TheDirectory}bamFiles --log-file=${TheDirectory}bamFiles/${BamName}.log
+	${rsync} -av ${BamToGrab} ${TheDirectory}bamFiles --log-file=${TheDirectory}bamFiles/${BamName}.log
 	</executable>
     </program>
 
@@ -19,9 +19,10 @@
 
 
     <arguments>
-	<arg name="TheDirectory" required="true" description="Name for Macs output"/>
-       <arg name="BamToGrab" required="true" description="Name for Macs output"/>
-       <arg name="BamName" required="true" description="Name for Macs output"/>
+	<arg name="TheDirectory" required="true" description="Working directory"/>
+       <arg name="BamToGrab" required="true" description="Location of Bamfile"/>
+       <arg name="BamName" required="true" description="Name of the BAM file"/>
+       <arg name="rsync" required="true" description="rsync command"/>
     </arguments>
 
 </task:task>

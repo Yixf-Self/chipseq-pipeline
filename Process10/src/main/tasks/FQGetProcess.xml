@@ -10,7 +10,7 @@
         <executable>
 	mkdir -p ${TheDirectory}/FQFiles
 	mkdir -p ${TheDirectory}/FQFiles/${BamName}
-	rsync -av ${BamToGrab} ${TheDirectory}/FQFiles/${BamName}/ --log-file=${TheDirectory}/FQFiles/${BamName}.log
+	${rsync} -av ${BamToGrab} ${TheDirectory}/FQFiles/${BamName}/ --log-file=${TheDirectory}/FQFiles/${BamName}.log
 	</executable>
     </program>
 
@@ -20,9 +20,10 @@
 
 
     <arguments>
-	<arg name="TheDirectory" required="true" description="Name for Macs output"/>
-       <arg name="BamToGrab" required="true" description="Name for Macs output"/>
-       <arg name="BamName" required="true" description="Name for Macs output"/>
+	<arg name="TheDirectory" required="true" description="Working directory"/>
+       <arg name="BamToGrab" required="true" description="FQ location"/>
+       <arg name="BamName" required="true" description="FQ name"/>
+       <arg name="rsync" required="true" description="rsync executable"/>
     </arguments>
 
 </task:task>
