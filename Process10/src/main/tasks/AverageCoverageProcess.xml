@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-		export R_LIBS='/home/mib-cri/local/lib64/R/library'
+		export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
 		${rexec} ${pipelineBase}/RScripts/R_TSS_AverageCoverage.r ${bam_processed} ${TheDirectory}/Coverage/ ${genomeName}
 
 	</executable>

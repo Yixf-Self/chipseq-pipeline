@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	/lustre/mib-cri/carrol09/Work/MyPipe/Motifs/bin/ame -oc ${TheDirectory}/Motif/${Test}/Known ${Sequences} ${MotifDatabase}
+	${ame} -oc ${TheDirectory}/Motif/${Test}/Known ${Sequences} ${MotifDatabase}
 	</executable>
     </program>
 
@@ -23,7 +23,8 @@
 
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
-	<arg name="Test" required="true" description="Working Directory"/>	
+	<arg name="Test" required="true" description="Working Directory"/>
+	<arg name="ame" required="true" description="Working Directory"/>	
     </arguments>
 
 </task:task>

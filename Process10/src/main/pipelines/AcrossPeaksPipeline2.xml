@@ -27,7 +27,10 @@
                <output name="Outfile1"  deleteOnFailure="true">${Outfile1}</output>
                <output name="Outfile2"  deleteOnFailure="true">${Outfile2}</output>
        </outputs>
-
+       <arguments>
+    	        <arg name="rexec">${rexec}</arg>
+    	        <arg name="pipelineBase">${pipelineBase}</arg>
+	</arguments> 	
 
      </task>
 	</subtasks> 

@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	/lustre/mib-cri/carrol09/Work/MyPipe/NewMeme/bin/meme-chip -oc ${TheDirectory}/Motif/${Test}/Denovo -db ${MotifDatabase} ${Sequences} 
+	${meme} -oc ${TheDirectory}/Motif/${Test}/Denovo -db ${MotifDatabase} ${Sequences} 
 	</executable>
     </program>
 
@@ -24,6 +24,7 @@
     <arguments>
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
 	<arg name="Test" required="true" description="Working Directory"/>	
+	<arg name="meme" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

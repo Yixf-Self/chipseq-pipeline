@@ -306,14 +306,17 @@ GetExecConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   rexec <- ConfigFile[ConfigFile[,2] %in% "rexec",3]  
   bigwig <- ConfigFile[ConfigFile[,2] %in% "bigwig",3]  
   macs <- ConfigFile[ConfigFile[,2] %in% "macs",3]  
+  meme <- ConfigFile[ConfigFile[,2] %in% "meme",3]  
+  ame <- ConfigFile[ConfigFile[,2] %in% "ame",3]  
+
 
   setClass("ExecConfig", representation(
   bwa = "character",python = "character",samtools = "character",picard= "character",perl= "character",
-  rsync = "character",bedtools = "character",java = "character",rexec = "character",bigwig="character",macs="character"
+  rsync = "character",bedtools = "character",java = "character",rexec = "character",bigwig="character",macs="character",ame="character",meme="character"
   ))
   PLExec <- new("ExecConfig",
   bwa = bwa,python = python,samtools = samtools,picard= picard,perl= perl,
-  rsync = rsync,bedtools = bedtools,java = java,rexec = rexec,bigwig=bigwig,macs=macs
+  rsync = rsync,bedtools = bedtools,java = java,rexec = rexec,bigwig=bigwig,macs=macs,ame=ame,meme=meme
   )
   return(PLExec)
 }
@@ -322,6 +325,15 @@ getExecPath <- function(ExecToRun,WkgDir=getwd(),Config="Config"){
    ExecPath <- slot(Execs,paste(ExecToRun,sep=""))
    return(ExecPath)
 }
+
+GetTFDB <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  tfdb <- ConfigFile[ConfigFile[,2] %in% "tfdb",3]
+  return(tfdb)
+}  
 
 
 GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
@@ -340,13 +352,18 @@ GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   bamprofilepipeline <- ConfigFile[ConfigFile[,2] %in% "bamprofilepipeline",3]
   macspeakcallpipeline <- ConfigFile[ConfigFile[,2] %in% "macspeakcallpipeline",3]
   peakprofilepipeline <- ConfigFile[ConfigFile[,2] %in% "peakprofilepipeline",3]
+  motifpipeline <- ConfigFile[ConfigFile[,2] %in% "motifpipeline",3]
+  betweenpeakspipeline  <- ConfigFile[ConfigFile[,2] %in% "betweenpeakspipeline",3]
+  acrosspeakspipeline  <- ConfigFile[ConfigFile[,2] %in% "acrosspeakspipeline",3]
 
   setClass("PipelinesConfig", representation(
-  mainpipeline = "character",bamfetchpipeline = "character",checkgenomepipeline = "character",fqfetchpipeline = "character",alignpipeline = "character",mergingpipeline = "character",bamprocesspipeline="character",bamprofilepipeline="character",macspeakcallpipeline="character",peakprofilepipeline="character"
+  mainpipeline = "character",bamfetchpipeline = "character",checkgenomepipeline = "character",fqfetchpipeline = "character",alignpipeline = "character",mergingpipeline = "character",bamprocesspipeline="character",bamprofilepipeline="character",macspeakcallpipeline="character",peakprofilepipeline="character",
+  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character"
+
   ))
   PLPipelines <- new("PipelinesConfig",
   mainpipeline = mainpipeline,bamfetchpipeline = bamfetchpipeline,checkgenomepipeline = checkgenomepipeline,fqfetchpipeline = fqfetchpipeline,alignpipeline = alignpipeline,mergingpipeline = mergingpipeline,bamprocesspipeline=bamprocesspipeline,
-  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline
+  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline
   )
   return(PLPipelines)
 }
@@ -1688,13 +1705,28 @@ if(CallMotifsCheck(Caller,WkgDir,Config)){
   ColumnIndexForRank <- 5
   RankOrder <- "RevRank"    
   }   
+  
+  Pipeline <- getPipelinesPath("motifpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rexec <- getExecPath("rexec")
+  meme <- getExecPath("meme")
+  ame <- getExecPath("ame")
+  
+   
+  
+  
   BamDir <- PLs@BamDir
-  MemeFormatdb <- "/lustre/mib-cri/carrol09/Work/MyPipe/NewMeme/TranfacMatrix.meme"
+  MemeFormatdb <- GetTFDB()
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config") 
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
   fastaFromGenome <- GetGenomeBuildFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,NPeaks,RankOrder,ColumnIndexForRank,MemeFormatdb)
-  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","Fasta","NPeaks","RankOrder","RankColumn","MotifDatabaseLocation")
+  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,NPeaks,RankOrder,ColumnIndexForRank,MemeFormatdb,ame,meme,rexec,PipelineBase,pythonExec)
+  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","Fasta","NPeaks","RankOrder","RankColumn","MotifDatabaseLocation","ame","meme","rexec","pipelineBase","python")
   
   JustOfInterest <- SampleSheet[!is.na(SampleSheet[,PeakFileNameColumn]) & !SampleSheet[,PeakFileNameColumn] %in% "NA",]
 if(nrow(JustOfInterest) > 0){
@@ -1717,11 +1749,11 @@ if(nrow(JustOfInterest) > 0){
   }
   
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MotifProcessPipeline2.xml"  
+#    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MotifProcessPipeline2.xml"  
     PipeName <- paste("SS_",Caller,"Motifs",sep="")
     SSPeakProfile_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSPeakProfile_WfMeta,file=file.path(PLs@WorkFlowDir,paste("SS_",Caller,"MotifProcess.xml",sep="")))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,paste("SS_",Caller,"MotifProcess.xml",sep="")),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,paste("SS_",Caller,"MotifProcess.xml",sep="")),sep=""),wait=T)
 }
   
   SampleSheet <- ReadAndLock(file.path(WkgDir,"SampleSheet.csv"),WkgDir,SAF=F,napTime=5)
@@ -1847,9 +1879,23 @@ if(CallBetweenPeaksCheck(Caller,WkgDir,Config)){
   RankOrder <- "RevRank"    
   }   
   BamDir <- PLs@BamDir
+  
+    
+  Pipeline <- getPipelinesPath("betweenpeakspipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rexec <- getExecPath("rexec")
+
+
+  
+  
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,file.path(PeakDirectory,""),genomeChrLengths)
-  names(Variables) <- c("WorkingDirectory","PeakDirectory","lengths")
+  Variables  <- c(WkgDir,file.path(PeakDirectory,""),genomeChrLengths,PipelineBase,rexec)
+  names(Variables) <- c("WorkingDirectory","PeakDirectory","lengths","pipelineBase","rexec")
   
   system(paste("mkdir -p ",file.path(PeakDirectory,"Between_Peaks",""),sep=""),wait=T)  
   
@@ -1878,11 +1924,11 @@ if(CallBetweenPeaksCheck(Caller,WkgDir,Config)){
       } 
       names(Specialisations) <-  paste(speicalNames,"_BetweenPeaks",sep="") 
       
-      Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/BetweenPeaksPipeline2.xml"  
+      #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/BetweenPeaksPipeline2.xml"  
       PipeName <- paste("SS_",Caller,"Between_Peaks",sep="")
       SSBetweenPeaks_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
       saveXML(SSBetweenPeaks_WfMeta,file=file.path(PLs@WorkFlowDir,paste("SS_",Caller,"BetweenPeaksProcess.xml",sep="")))
-      system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,paste("SS_",Caller,"BetweenPeaksProcess.xml",sep="")),sep=""),wait=T)
+      system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,paste("SS_",Caller,"BetweenPeaksProcess.xml",sep="")),sep=""),wait=T)
     }
     }
 }      	
@@ -1893,10 +1939,23 @@ RunAcrossPeaksPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
 
   if(length(colnames(SampleSheet[,which(grepl("Peaks$",colnames(SampleSheet)) & !grepl("Genes",colnames(SampleSheet)))]) > 1)){
 
+  Pipeline <- getPipelinesPath("acrosspeakspipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  pythonExec <- getExecPath("python")    
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  rexec <- getExecPath("rexec")
+
+
+  
+
+
   BamDir <- PLs@BamDir
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir)
-  names(Variables) <- c("WorkingDirectory")
+  Variables  <- c(WkgDir,rexec,PipelineBase)
+  names(Variables) <- c("WorkingDirectory","rexec","pipelineBase")
   
   system(paste("mkdir -p ",file.path(WkgDir,"Peaks","Across_Peaks",""),sep=""),wait=T)  
   GeneralPeakDir <- file.path(WkgDir,"Peaks","Across_Peaks","")
@@ -1938,11 +1997,12 @@ RunAcrossPeaksPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
   
   names(Specialisations) <- namesForSpecials
       
-      Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/AcrossPeaksPipeline2.xml"  
+      
+      #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/AcrossPeaksPipeline2.xml"  
       PipeName <- paste("SS_Across_PeakCalls",sep="")
       SSBetweenPeaks_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
       saveXML(SSBetweenPeaks_WfMeta,file=file.path(PLs@WorkFlowDir,paste("SS_AcrossPeakCallsProcess.xml",sep="")))
-      system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,paste("SS_AcrossPeakCallsProcess.xml",sep="")),sep=""),wait=T)
+      system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,paste("SS_AcrossPeakCallsProcess.xml",sep="")),sep=""),wait=T)
   } 
       PeakCallerCombos <- paste(PeakCallerCombinations[1,],PeakCallerCombinations[2,],sep="_Vs_")
       AllAcrossPeaksRes <- dir(path=file.path(WkgDir,"Peaks","Across_Peaks",""),pattern="_Res.txt")

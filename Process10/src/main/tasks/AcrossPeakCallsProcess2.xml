@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 		export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
-		/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/R_RunCompare2peakSets.r ${Peaks1} ${Peaks2} ${Outfile1} ${Outfile2}
+		${rexec} --vanilla ${pipelineBase}/RScripts/R_RunCompare2peakSets.r ${Peaks1} ${Peaks2} ${Outfile1} ${Outfile2}
 	</executable>
     </program>
 
@@ -23,6 +23,10 @@
         <output name="Outfile2" required="true" safeNaming="false" description="Stats on overlaps between peak sets" />
     </outputs>
 
+   <arguments>
+	<arg name="rexec" required="true" description="Working Directory"/>
+	<arg name="pipelineBase" required="true" description="Working Directory"/>
+    </arguments>
 
 
 </task:task>

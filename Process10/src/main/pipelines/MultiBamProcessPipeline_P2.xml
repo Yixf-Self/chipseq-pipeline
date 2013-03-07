@@ -123,6 +123,8 @@
            <arg name="genomeName">${genomeName}</arg>
 	    <arg name="rexec">${rexec}</arg>
            <arg name="pipelineBase">${pipelineBase}</arg>
+           <arg name="genomeLengths">${genomeFile}</arg>
+
     	</arguments> 
                </task>
 

@@ -31,6 +31,8 @@
     	    <arg name="NPeaks">${NPeaks}</arg>
     	    <arg name="Test">${Test}</arg>
 	   <arg name="SamplePeakDir">${SamplePeakDir}</arg>
+	   <arg name="rexec">${rexec}</arg>
+    	   <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
          </task>
 
@@ -54,6 +56,9 @@
 	<arguments>
     	    <arg name="TheDirectory">${PeakDirectory}</arg>
     	    <arg name="Test">${Test}</arg>
+    	    <arg name="python">${python}</arg>
+    	    <arg name="pipelineBase">${pipelineBase}</arg>
+
     	</arguments> 
          </task>
 
@@ -78,7 +83,9 @@
             </outputs>
 	<arguments>
     	    <arg name="TheDirectory">${PeakDirectory}</arg>
-    	    <arg name="Test">${Test}</arg>    	    
+    	    <arg name="Test">${Test}</arg> 
+    	    <arg name="meme">${meme}</arg> 
+   	    
     	</arguments> 
          </task>
 
@@ -102,6 +109,7 @@
 	<arguments>
     	    <arg name="TheDirectory">${PeakDirectory}</arg>
     	    <arg name="Test">${Test}</arg>    	    
+    	    <arg name="ame">${ame}</arg>  
     	</arguments> 
          </task>
 
