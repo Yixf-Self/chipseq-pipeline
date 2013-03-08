@@ -9,6 +9,19 @@ WkgDir <- getwd()
 getRandString<-function(len=12) return(paste(sample(c(rep(0:9,each=5),LETTERS,letters),len,replace=TRUE),collapse=''))
 JobString <- getRandString()
 #JobString <- Args[3]
+
+
+GetPipelinebase <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  PipelineBase <- ConfigFile[ConfigFile[,2] %in% "BaseLocation",3]
+  return(PipelineBase)
+}  
+PipelineBase <- GetPipelinebase()
+
+
 source(file.path(PipelineBase,"/RScripts/Workflow_Functions3.r"))
 ## Parse from config important locations
 

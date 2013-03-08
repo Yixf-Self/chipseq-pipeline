@@ -5,6 +5,17 @@ Args <- commandArgs(trailingOnly = TRUE)
 
 ## Get the Working directory from the supplied argument
 WkgDir <- getwd()
+
+GetPipelinebase <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  PipelineBase <- ConfigFile[ConfigFile[,2] %in% "BaseLocation",3]
+  return(PipelineBase)
+}  
+PipelineBase <- GetPipelinebase()
+
 source(file.path(PipelineBase,"/RScripts/Workflow_Functions3.r"))
 #
 #WkgDir <- Args[2]
