@@ -44,7 +44,7 @@ def GetHeaderInfo(BamFile):
 
 
 def GetGenome(BamFile):
-	genome = "HG18"
+	genome = "hg18"
 	TempHead = GetHeaderInfo(BamFile)
 	TempComments = TempHead["Comments"]
 	for comments in TempComments:
@@ -62,16 +62,15 @@ def GetDirGetName(BamFile):
 
 
 BamFile = sys.argv[1]
-TargetGenome = sys.argv[2]
+
 
 TempNames = GetDirGetName(BamFile)
 
 genome = GetGenome(BamFile)
-print(genome)
-if genome != TargetGenome:
-	ReAlignLog = open(TempNames[0]+TempNames[1]+".AlignMe","a")
-	ReAlignLog.write("\n")
-	ReAlignLog.close()
+#print(genome)
+ReAlignLog = open(TempNames[0]+TempNames[1]+".info","a")
+ReAlignLog.write(genome+"\n")
+ReAlignLog.close()
 
 
 
