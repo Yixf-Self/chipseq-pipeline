@@ -2087,14 +2087,15 @@ RunMainPipeline <- function(WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocat
   R_executable <- getExecPath("rexec")  
   javaExec <- getExecPath("java")
   mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
   
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   WorkFlowDirectory <- PLs@WorkFlowDir
   Config2 <- file.path(WkgDir,Config,"config.ini")
-  R_executable <- "/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript"
+  #R_executable <- "/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript"
   RandomTrackerNumber <-  getRandString()
-  Variables  <- c(WorkFlowDirectory,RandomTrackerNumber,Config2,R_executable)
-  names(Variables) <- c("WorkflowDir","PathwayTracker","Config","R_Executable")
+  Variables  <- c(WorkFlowDirectory,RandomTrackerNumber,Config2,R_executable,PipelineBase)
+  names(Variables) <- c("WorkflowDir","PathwayTracker","Config","R_Executable","pipelineBase")
   Specialisations <- vector("list")
   #Specialisations[[1]] <- "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20121114_MontoyaAR_DN_Hes6ChIP/bamFiles/ID-LNCAP-LM-HES6-BICALUTAMIDE-INPUT-D26.bwa.bam"
   

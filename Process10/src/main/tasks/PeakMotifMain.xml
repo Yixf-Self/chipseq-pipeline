@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-		${R_Executable}  --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/R_PeakMotif_Main3.r ${WorkflowRunID} ${Config} ${PeakCaller}
+		${R_Executable}  --vanilla ${pipelineBase}/RScripts/R_PeakMotif_Main3.r ${WorkflowRunID} ${Config} ${PeakCaller}
 	</executable>
     </program>
     <inputs>
@@ -24,6 +24,7 @@
 	<arg name="WorkflowDir" required="true" description="Where to look for the workflow output"/>
 	<arg name="R_Executable" required="true" description="R for workflow"/>
 	<arg name="PeakCaller" required="true" description="Which PeakCaller was used.."/>
+	<arg name="pipelineBase" required="true" description="R for workflow"/>
     </arguments>
 
 </task:task>

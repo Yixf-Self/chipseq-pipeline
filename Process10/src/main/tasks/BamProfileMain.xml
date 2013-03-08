@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-		${R_Executable}  --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/R_BamProfile_Main2.r ${WorkflowRunID} ${Config}
+		${R_Executable}  --vanilla ${pipelineBase}/RScripts/R_BamProfile_Main2.r ${WorkflowRunID} ${Config}
 	</executable>
     </program>
     <inputs>
@@ -23,6 +23,7 @@
 	<arg name="WorkflowRunID" required="true" description="Workflow ID"/>
 	<arg name="WorkflowDir" required="true" description="Where to look for the workflow output"/>
 	<arg name="R_Executable" required="true" description="R for workflow"/>
+	<arg name="pipelineBase" required="true" description="R for workflow"/>
     </arguments>
 
 </task:task>

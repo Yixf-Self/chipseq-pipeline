@@ -27,6 +27,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -53,6 +54,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -84,6 +86,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -111,6 +114,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">Macs</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -138,6 +142,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">Macs</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -165,6 +170,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">Macs</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -191,6 +197,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -218,6 +225,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">Sicer</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -245,6 +253,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">Sicer</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -272,6 +281,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">Sicer</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -305,6 +315,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -332,6 +343,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">TPICs</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -359,6 +371,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">TPICs</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -386,6 +399,7 @@
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
 	    <arg name="PeakCaller">TPICs</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -418,6 +432,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
@@ -480,6 +495,7 @@
     	    <arg name="WorkflowRunID">${PathwayTracker}</arg>
 	    <arg name="WorkflowDir">${WorkflowDir}</arg>
 	    <arg name="R_Executable">${R_Executable}</arg>
+	    <arg name="pipelineBase">${pipelineBase}</arg>
     	</arguments> 
             
 	</task>
