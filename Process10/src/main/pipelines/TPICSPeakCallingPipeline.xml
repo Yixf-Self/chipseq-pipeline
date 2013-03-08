@@ -15,7 +15,7 @@
 	<subtasks> 
 
 
-	<task name="TPICsPeakCaller" type="TPICsPeakCaller">
+	<task name="TPICsPeakCaller2" type="TPICsPeakCaller2">
         <resources>
             <memory>4G</memory>
         </resources>
@@ -34,12 +34,17 @@
               <arg name="TestBed">${Test}.bed</arg>
               <arg name="ControlBed">${Control}.bed</arg>
               <arg name="TheWideScaleWidth">${WideScale}</arg>
+		<arg name="perl">${perl}</arg>
+		<arg name="tpics">${tpics}</arg>
+              <arg name="tpicszeta">${tpicszeta}</arg>
+              <arg name="tpicscoverage">${tpicscoverage}</arg>
+              <arg name="rexec">${rexec}</arg>
     	</arguments>            
 	</task>
 
 	<task name="TPICsPeakSummary" type="TPICsPeakSummary">
        <depends>
-		<task>TPICsPeakCaller</task>
+		<task>TPICsPeakCaller2</task>
        </depends>
 
         <resources>
@@ -64,6 +69,7 @@
               <arg name="TestBed">${Test}.bed</arg>
               <arg name="ControlBed">${Control}.bed</arg>
               <arg name="TheWideScaleWidth">${WideScale}</arg>
+              <arg name="bedtools">${bedtools}</arg>
     	</arguments>            
 	</task>
 

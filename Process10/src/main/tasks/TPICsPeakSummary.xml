@@ -10,7 +10,7 @@
         <executable>
 	awk -v OFS="\t" '$1=$1' ${TestName}/TPIC.final.bed > ${TestName}/${SampleName}_final_TPICS.bed
 	awk -v OFS="\t" '$1=$1' ${TestName}/TPIC.bed > ${TestName}/${SampleName}_TPIC.bed
-	bedtools intersect -wb -a ${TestName}/${SampleName}_final_TPICS.bed -b ${TestName}/${SampleName}_TPIC.bed | awk '{print $1 "\t" $2 "\t" $3 "\t" $7/$8 "\t" $9}' | groupBy -c 4,5 -o mean,mean > ${TestName}/${SampleName}_Temp_TPICS_Peaks.bed
+	${bedtools}/intersect -wb -a ${TestName}/${SampleName}_final_TPICS.bed -b ${TestName}/${SampleName}_TPIC.bed | awk '{print $1 "\t" $2 "\t" $3 "\t" $7/$8 "\t" $9}' | ${bedtools}/groupBy -c 4,5 -o mean,mean > ${TestName}/${SampleName}_Temp_TPICS_Peaks.bed
 	sort -k1,1V -k2,2g ${TestName}/${SampleName}_Temp_TPICS_Peaks.bed > ${TestName}/${SampleName}_TPICS_Peaks.bed
 
 	</executable>
@@ -35,6 +35,7 @@
        <arg name="TestBed" required="true" description="The Bam file." />
        <arg name="ControlBed" required="true" description="genome." />
        <arg name="TheWideScaleWidth" required="true" description="genome." />	
+       <arg name="bedtools" required="true" description="genome." />
 
     </arguments>
 
