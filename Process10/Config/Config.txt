@@ -1,8 +1,0 @@
-Macs_mFold	"10,30"
-Fragment_Length	200
-Genome	GRCh37
-Bam_Process_Unique	TRUE
-Bam_Process_MaqQ_Filter	15
-Bam_Process_ExcludeRegions	TRUE
-
-
