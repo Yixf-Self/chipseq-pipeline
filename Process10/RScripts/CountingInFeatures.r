@@ -22,7 +22,7 @@ return(FeatureTypeLengths)
 
 
 #for(l in 1:length(fileList)){
-CountInFeatures <- function(File,TestFeatures){
+CountInFeatures <- function(File,TestFeatures,lengths){
 #  File <- fileList[20]
 levels(elementMetadata(GeneSectionsToCount)$Feature)
   library(GenomicRanges)
@@ -30,13 +30,13 @@ levels(elementMetadata(GeneSectionsToCount)$Feature)
   print(File)
   #BamBnd <-  readGappedAlignments("/lustre/mib-cri/stark01/20110401_LewisS_AM_HydrxMeth/bamFiles/SLX-3713.607.s_1.bwa.homo_sapiens.bam",which=ForWhich_2,what=c("rname", "strand", "pos", "qwidth"))
   t <- scanBamHeader(File)
-  TempLengths <- seqlengths(Hsapiens)
-  TempLengths <- TempLengths[names(TempLengths) %in% names(t[[1]]$targets)]
-  TempLengths <- TempLengths[!names(TempLengths) == "chrM"]
-  TempLengths <- TempLengths-1000
-  BigWhich <- GRanges(names(TempLengths),IRanges(1,TempLengths))
+  TempLengths <- lengths
+  TempLengths <- TempLengths[TempLengths[,1] %in% names(t[[1]]$targets),]
+  TempLengths <- TempLengths[!TempLengths[,1] == "chrM",]
+  TempLengths[,2] <- TempLengths[,2]-1000
+  BigWhich <- GRanges(TempLengths[,1],IRanges(1,TempLengths[,2]))
   print("reading gapped alignments..")
-  BamBnd <-  readGappedAlignments(File,flag=scanBamFlag(isDuplicate=NA),which=BigWhich,what=c("rname", "strand", "pos", "qwidth"))
+  BamBnd <-  readGappedAlignments(File,param=ScanBamParam(flag=scanBamFlag(isDuplicate=NA),which=BigWhich,what=c("rname", "strand", "pos", "qwidth")))
   print("done")
   BamReads <- granges(BamBnd)
 #  widthForReads <- as.numeric(names(sort(table(width(BamBnd)),decreasing=TRUE)[1]))
@@ -73,7 +73,7 @@ TestRes <- vector("numeric",length=length(TotTest))
 
 
 Args <- commandArgs(trailingOnly = TRUE)
-library(org.Hs.eg.db)
+#library(org.Hs.eg.db)
 
 BuildOverLapRanges <- function(CRIStyle){
   GRanges(seqnames=seqnames(CRIStyle),ranges=IRanges(start=as.numeric(as.vector(elementMetadata(CRIStyle)$OverLap_Start)),end=as.numeric(as.vector(elementMetadata(CRIStyle)$OverLap_End))))
@@ -156,9 +156,9 @@ require(GenomicRanges)
 
 PeaksToGenesCRIStyle <- function(ExtGenes,Rit){
 require(GenomicRanges)
-    MatchedGenes <- ExtGenes[findOverlaps(ExtGenes,Rit)@matchMatrix[,1]]
-    MatchedPeaks <- Rit[findOverlaps(ExtGenes,Rit)@matchMatrix[,2]]
-    NotMatchePeaks <- Rit[-findOverlaps(ExtGenes,Rit)@matchMatrix[,2]]
+    MatchedGenes <- ExtGenes[matchMatrix(findOverlaps(ExtGenes,Rit))[,1]]
+    MatchedPeaks <- Rit[matchMatrix(findOverlaps(ExtGenes,Rit))[,2]]
+    NotMatchePeaks <- Rit[-matchMatrix(findOverlaps(ExtGenes,Rit))[,2]]
     TempData <- as.data.frame(MatchedPeaks)[-4] ## Removes width part of object which is automatically generated
     colnames(TempData) <- paste("Peak",colnames(TempData),sep="_")
     elementMetadata(MatchedGenes) <- cbind(as.data.frame(elementMetadata(MatchedGenes)),TempData)
@@ -270,29 +270,40 @@ File <- Args[2]
 WkgDir <- Args[3]
 if(tolower(Args[1]) %in% tolower("HG18")){
   load("/lustre/mib-cri/carrol09/Work/MyPipe/Annotation/Genes_HG18.RData")
-  library(BSgenome.Hsapiens.UCSC.hg18)
+#  library(BSgenome.Hsapiens.UCSC.hg18)
   Genes <- Genes36
 }
 
 if(tolower(Args[1]) %in% tolower("GRCh37")){
   load("/lustre/mib-cri/carrol09/Work/MyPipe/Annotation/Genes_GRCh37.RData")
-  library(BSgenome.Hsapiens.UCSC.hg19)
+#  library(BSgenome.Hsapiens.UCSC.hg19)
   Genes <- Genes37
 }
 
+print("Here1")
+
+#GeneLengths <- read.delim("/lustre/mib-cri/carrol09/MyPipe/bedFiles/hg19.txt",sep="\t",header=F)
+GeneLengths <- read.delim(Args[4],sep="\t",header=F)
+
+print("Here")
+
 elementMetadata(Genes)$Feature <- "Gene"
 GenesAndPromoters <- ExtendGenes(Genes,10000)
-TempRepeats <- table(elementMetadata(GenesAndPromoters[findOverlaps(GenesAndPromoters,GenesAndPromoters)@matchMatrix[,1],])$SymbolGenes)
+print("Here5")
+TempRepeats <- table(elementMetadata(GenesAndPromoters[matchMatrix(findOverlaps(GenesAndPromoters,GenesAndPromoters))[,1],])$SymbolGenes)
 CrossLappingGenes <- names(TempRepeats[TempRepeats > 2])
 NonLappingGenes <-  Genes[!elementMetadata(Genes)$SymbolGenes %in% CrossLappingGenes,]
 
+print("Here2")
 GeneSectionsToCount <- ExtendForReadsPeaksIn(NonLappingGenes)
+
+print("Here")
 
 TotTest <- c("Total",levels(elementMetadata(GeneSectionsToCount)$Feature),"Intragenic")
 
 ResMatrix <- matrix(nrow=length(TotTest),ncol=1)
 
-Counts <- CountInFeatures(File,GeneSectionsToCount)
+Counts <- CountInFeatures(File,GeneSectionsToCount,GeneLengths)
 FeatureTypeLengths <- GetLengthsOfFeatures(GeneSectionsToCount)
 
 ForExport <- rbind(Counts,FeatureTypeLengths)

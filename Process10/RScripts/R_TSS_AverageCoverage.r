@@ -1,14 +1,14 @@
 ### Load in Libraries
-library(multicore)
+library(parallel)
 library(GenomicRanges)
-library(BSgenome.Hsapiens.UCSC.hg18)
+#library(BSgenome.Hsapiens.UCSC.hg18)
 library(Rsamtools)
 
 CoverageFeature <- function(fileList,WindowSizeLeft,WindowSizeRight=NULL,prefix="",selectedGenes,WkgDir){
-require(Rlsf)
-require(multicore)
+#require(Rlsf)
+#require(multicore)
 require(GenomicRanges)
-require(BSgenome.Hsapiens.UCSC.hg18)
+#require(BSgenome.Hsapiens.UCSC.hg18)
 require(Rsamtools)
 
 
@@ -77,17 +77,17 @@ rm(TSS)
 
 GetCoverage <- function(file,TSS_3,direct,prefix){
 require(Rlsf)
-require(multicore)
+#require(multicore)
 require(GenomicRanges)
-require(BSgenome.Hsapiens.UCSC.hg18)
+#require(BSgenome.Hsapiens.UCSC.hg18)
 require(Rsamtools)
 
 
   deltaConvolve <- function(Chromosome,TSS_3,TSS_2,ReadRanges, left, right){
 require(Rlsf)
-require(multicore)
+#require(multicore)
 require(GenomicRanges)
-require(BSgenome.Hsapiens.UCSC.hg18)
+#require(BSgenome.Hsapiens.UCSC.hg18)
 require(Rsamtools)
   ######
 ##  Need to make this strand dependent too ..as in left and right are no longer symmetrical
@@ -133,7 +133,7 @@ require(Rsamtools)
 
   cat("Reading in file......\n")
 if(file.exists(paste(file,".bai",sep=""))){
-  BamBnd <-  readGappedAlignments(file,which=TSS_2,what=c("rname", "strand", "pos", "qwidth"))
+  BamBnd <-  readGappedAlignments(file,param=ScanBamParam(which=TSS_2,what=c("rname", "strand", "pos", "qwidth")))
 if(length(BamBnd) > 1000){
   cat("...Done\n")
   #BamBnd <-  readGappedAlignments("/lustre/mib-cri/carrol09/Work/ToBreak/20110526_TheodorouV_JC_MYCE2F1/bamFiles/SLX-2574.433.s_2.bwa.homo_sapiens_exclude_f_JC133_f.bam",which=TSS_2,what=c("rname", "strand", "pos", "qwidth"))
