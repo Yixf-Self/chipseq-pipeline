@@ -5,7 +5,7 @@ Args <- commandArgs(trailingOnly = TRUE)
 
 ## Get the Working directory from the supplied argument
 WkgDir <- getwd()
-source("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/Workflow_Functions3.r")
+source(file.path(PipelineBase,"/RScripts/Workflow_Functions3.r"))
 #
 #WkgDir <- Args[2]
 #JobString <- "toysd2"

@@ -12,7 +12,7 @@ WkgDir <- getwd()
 
 JobString <- Args[1]
 
-source("/lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/Workflow_Functions3.r")
+source(file.path(PipelineBase,"/RScripts/Workflow_Functions3.r"))
 ## Parse from config important locations
 
 PipeLineLocations <- GetImportantLocations(WkgDir,"Config")
