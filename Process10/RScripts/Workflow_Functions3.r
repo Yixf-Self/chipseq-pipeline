@@ -308,15 +308,20 @@ GetExecConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   macs <- ConfigFile[ConfigFile[,2] %in% "macs",3]  
   meme <- ConfigFile[ConfigFile[,2] %in% "meme",3]  
   ame <- ConfigFile[ConfigFile[,2] %in% "ame",3]  
-
+  sicer <- ConfigFile[ConfigFile[,2] %in% "sicer",3]  
+  tpicszeta <- ConfigFile[ConfigFile[,2] %in% "tpicszeta",3]   
+  tpicscreatecoverage <- ConfigFile[ConfigFile[,2] %in% "tpicscreatecoverage",3]
+  tpics <- ConfigFile[ConfigFile[,2] %in% "tpics",3]  
 
   setClass("ExecConfig", representation(
   bwa = "character",python = "character",samtools = "character",picard= "character",perl= "character",
-  rsync = "character",bedtools = "character",java = "character",rexec = "character",bigwig="character",macs="character",ame="character",meme="character"
+  rsync = "character",bedtools = "character",java = "character",rexec = "character",bigwig="character",macs="character",ame="character",meme="character",
+  sicer = "character",tpicszeta = "character",tpicscreatecoverage = "character",tpics = "character"
   ))
   PLExec <- new("ExecConfig",
   bwa = bwa,python = python,samtools = samtools,picard= picard,perl= perl,
-  rsync = rsync,bedtools = bedtools,java = java,rexec = rexec,bigwig=bigwig,macs=macs,ame=ame,meme=meme
+  rsync = rsync,bedtools = bedtools,java = java,rexec = rexec,bigwig=bigwig,macs=macs,ame=ame,meme=meme,
+  sicer = sicer,tpicszeta = tpicszeta,tpicscreatecoverage = tpicscreatecoverage,tpics = tpics  
   )
   return(PLExec)
 }
@@ -355,15 +360,17 @@ GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   motifpipeline <- ConfigFile[ConfigFile[,2] %in% "motifpipeline",3]
   betweenpeakspipeline  <- ConfigFile[ConfigFile[,2] %in% "betweenpeakspipeline",3]
   acrosspeakspipeline  <- ConfigFile[ConfigFile[,2] %in% "acrosspeakspipeline",3]
-
+  sicerpeakcallpipeline  <- ConfigFile[ConfigFile[,2] %in% "sicerpeakcallpipeline",3]  
+  tpicspeakcallpipeline  <- ConfigFile[ConfigFile[,2] %in% "tpicspeakcallpipeline",3]
+    
   setClass("PipelinesConfig", representation(
   mainpipeline = "character",bamfetchpipeline = "character",checkgenomepipeline = "character",fqfetchpipeline = "character",alignpipeline = "character",mergingpipeline = "character",bamprocesspipeline="character",bamprofilepipeline="character",macspeakcallpipeline="character",peakprofilepipeline="character",
-  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character"
+  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character",tpicspeakcallpipeline = "character",sicerpeakcallpipeline = "character"
 
   ))
   PLPipelines <- new("PipelinesConfig",
   mainpipeline = mainpipeline,bamfetchpipeline = bamfetchpipeline,checkgenomepipeline = checkgenomepipeline,fqfetchpipeline = fqfetchpipeline,alignpipeline = alignpipeline,mergingpipeline = mergingpipeline,bamprocesspipeline=bamprocesspipeline,
-  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline
+  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline,tpicspeakcallpipeline = tpicspeakcallpipeline,sicerpeakcallpipeline = sicerpeakcallpipeline
   )
   return(PLPipelines)
 }
@@ -1424,9 +1431,19 @@ if(CallPeaksCheck("Sicer",WkgDir,Config)){
    GapSize <- getSicerGapSize(WkgDir,ConfigDirectory="Config")      
    GenomeForSicer <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config")
    GenomeForSicer[tolower(GenomeForSicer) == "grch37"] <- "hg19" 
-   GenomeForSicer[GenomeForSicer == "grch37"] <- "mm9"
+   GenomeForSicer[GenomeForSicer == "mm9"] <- "mm9"
   #"hg18","GRCh37","hg19","MM9","mm9"
-   sicerexec <- getSicerExec(WkgDir,ConfigDirectory="Config")
+
+
+   Pipeline <- getPipelinesPath("sicerpeakcallpipeline")
+   workflowExec <- getWorkflowParam("Executable")
+   javaExec <- getExecPath("java")
+   mode <- tolower(getWorkflowParam("Mode"))
+   PipelineBase <- GetPipelinebase()
+   pythonExec <- getExecPath("python")    
+   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+   rexec <- getExecPath("rexec")
+   sicerexec <- getExecPath("sicer")
    
    ShiftSizeDefault <- 100
    
@@ -1458,11 +1475,11 @@ if(CallPeaksCheck("Sicer",WkgDir,Config)){
     } 
     names(Specialisations) <-  paste(as.vector(SamplesAndInputs[,1]),"_SicerPeakCall",sep="") 
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/SicerPeakCallingPipeline.xml"  
+    #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/SicerPeakCallingPipeline.xml"  
     PipeName <- "SS_SicerPeak"
     SSSicerPeak_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSSicerPeak_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_SicerPeak.xml"))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SS_SicerPeak.xml"),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SS_SicerPeak.xml"),sep=""),wait=T)
   }
 
  #######################
@@ -1505,6 +1522,20 @@ if(CallPeaksCheck("TPICs",WkgDir,Config)){
 #   GenomeForTPICS[GenomeForTPICS == "grch37"] <- "hg19" 
 #   GenomeForSicer[GenomeForSicer == "grch37"] <- "mm9"
 
+
+
+   Pipeline <- getPipelinesPath("tpicspeakcallpipeline")
+   workflowExec <- getWorkflowParam("Executable")
+   javaExec <- getExecPath("java")
+   mode <- tolower(getWorkflowParam("Mode"))
+   PipelineBase <- GetPipelinebase()
+   perl <- getExecPath("perl")    
+   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+   rexec <- getExecPath("rexec")
+   tpics <- getExecPath("tpics")
+   tpicszeta <- getExecPath("tpicszeta") 
+   tpicscoverage <- getExecPath("tpicscreatecoverage")   
+   bedtools <- getExecPath("bedtools")   
        
    
    ShiftSizeDefault <- 100
@@ -1525,8 +1556,8 @@ if(CallPeaksCheck("TPICs",WkgDir,Config)){
 
    SamplesAndInputs[SamplesAndInputs[,3] %in% "Too_few_Reads_To_Calculate" | SamplesAndInputs[,3] %in% "No_Information_Available" | is.na(SamplesAndInputs[,3]),3] <-  ShiftSizeDefault
 
-  Variables  <- c(file.path(PLs@TPICsDir,""),file.path(PLs@BamDir,""),WkgDir,GenomeForTPICS,min_size,WideScale)
-  names(Variables) <- c("TPICsDirectory","BamDirectory","WorkingDirectory","GT","min_size","WideScale")
+  Variables  <- c(file.path(PLs@TPICsDir,""),file.path(PLs@BamDir,""),WkgDir,GenomeForTPICS,min_size,WideScale,bedtools,tpics,tpicszeta,tpicscoverage,rexec,perl)
+  names(Variables) <- c("TPICsDirectory","BamDirectory","WorkingDirectory","GT","min_size","WideScale","bedtools","tpics","tpicszeta","tpicscoverage","rexec",perl)
   
 
   if(nrow(SamplesAndInputs) > 0){
@@ -1537,11 +1568,11 @@ if(CallPeaksCheck("TPICs",WkgDir,Config)){
     } 
     names(Specialisations) <-  paste(as.vector(SamplesAndInputs[,1]),"_TPICsPeakCall",sep="") 
   
-    Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/TPICSPeakCallingPipeline.xml"  
+    #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/TPICSPeakCallingPipeline.xml"  
     PipeName <- "SS_TPICsPeak"
     SSTPICsPeak_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
     saveXML(SSTPICsPeak_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_TPICsPeak.xml"))
-    system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,"SS_TPICsPeak.xml"),sep=""),wait=T)
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SS_TPICsPeak.xml"),sep=""),wait=T)
   }
 
 
