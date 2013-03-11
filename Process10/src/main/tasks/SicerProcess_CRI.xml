@@ -10,6 +10,7 @@
         <executable>
 	mkdir -p ${TestName}
 	cd ${TestName}
+	export PYTHONPATH=${pythonlibs}
 	sh ${sicerexec} ${BamDirectory}/ ${TestBed} ${ControlBed}  ${TestName} ${GenomeForSicer} 1 ${Window} ${shiftSize} 0.74 ${GapSize} ${FDR}
 	</executable>
     </program>
@@ -31,6 +32,7 @@
        <arg name="FDR" required="true" description="FDR." />
        <arg name="BamDirectory" required="true" description="BamDirectory." />	
        <arg name="sicerexec" required="true" description="sicerexec." />
+       <arg name="pythonlibs" required="true" description="sicerexec." />
     </arguments>
 
 </task:task>

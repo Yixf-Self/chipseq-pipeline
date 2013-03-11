@@ -8,6 +8,7 @@
 
     <program type="commandLine">
         <executable>
+	 export PYTHONPATH=${pythonlibs}
 	 ${python} ${pipelineBase}/PythonScripts/CRIReheader.py  ${InputFile} ${GenomeBuild} 
 	 ${samtools} reheader ${ReAlignDirectory}/${Name}_Sorted_Temphead.sam ${InputFile} > ${ReAlignDirectory}/${Name}_Rehead.bam
 	</executable>
@@ -29,8 +30,7 @@
     		<arg name="samtools" required="true" description="samtools exec "/>
     		<arg name="python" required="true" description="python exec"/>
     		<arg name="pipelineBase" required="true" description="pipelineBase"/>
-		
-
+    		<arg name="pythonlibs" required="true" description="pipelineBase"/>
     </arguments>
 
 </task:task>

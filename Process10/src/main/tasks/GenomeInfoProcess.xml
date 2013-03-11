@@ -8,6 +8,7 @@
 
     <program type="commandLine">
        <executable>
+	export PYTHONPATH=${pythonlibs}
 	${python} ${pipelineBase}/PythonScripts/CRIGenome.py ${bam} ${TargetGenome}
 	</executable>
     </program>
@@ -24,6 +25,7 @@
         <arg name="TargetGenome" required="true" description="Desired genome for data to be aligned against" />
         <arg name="python" required="true" description="python executable" />
         <arg name="pipelineBase" required="true" description="Basedirectory of pipeline" />
+        <arg name="pythonlibs" required="true" description="Basedirectory of pipeline" />
     </arguments>
 
 

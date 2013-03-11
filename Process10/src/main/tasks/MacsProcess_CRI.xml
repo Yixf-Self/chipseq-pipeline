@@ -9,6 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${Macs_Directory}
+	export PYTHONPATH=${pythonlibs}
 	${Macs_Executable} -t ${TestBam} -c ${ControlBam} -f BAM -g ${GenomeForMacs} -m ${Mfold} --shiftsize=${shiftSize} -n ${OutputName} 
 
 	</executable>
@@ -33,6 +34,7 @@
 	<arg name="shiftSize" required="true" description="ShiftZie for Macs output"/>	
 	<arg name="Macs_Directory" required="true" description="Working Directory"/>
 	<arg name="Macs_Executable" required="true" description="Working Directory"/>
+	<arg name="pythonlibs" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

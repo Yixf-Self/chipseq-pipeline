@@ -33,6 +33,7 @@
               <arg name="TestBed">${Test}.bed</arg>
               <arg name="ControlBed">${Control}.bed</arg>
               <arg name="TheWideScaleWidth">10000</arg>
+              <arg name="rlibs">${rlibs}</arg>
     	</arguments> 
             
 	</task>

@@ -23,6 +23,9 @@
 				
 				<arguments>
 			    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
+			    	    <arg name="rexec">${rexec}</arg>
+			    	    <arg name="pipelineBase">${pipelineBase}</arg>
+			    	    <arg name="rlibs">${rlibs}</arg>
 				</arguments> 
 			 </task>
 

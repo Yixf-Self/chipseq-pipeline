@@ -9,6 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Motif/${Test}/
+	export R_LIBS=${rlibs}
 	${rexec} ${pipelineBase}/RScripts/GetTopPeaks.r ${PeakFile} ${OutFile} ${RankColumn} ${RankOrder} ${NPeaks}
 	</executable>
     </program>
@@ -30,6 +31,7 @@
 	<arg name="Test" required="true" description="Working Directory"/>
 	<arg name="rexec" required="true" description="Working Directory"/>
 	<arg name="pipelineBase" required="true" description="Working Directory"/>
+	<arg name="rlibs" required="true" description="Working Directory"/>
 
     </arguments>
 

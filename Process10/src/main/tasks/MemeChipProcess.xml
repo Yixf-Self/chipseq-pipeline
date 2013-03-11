@@ -8,6 +8,7 @@
 
     <program type="commandLine">
         <executable>
+	export PERL5LIB = ${perllibs}
 	${meme} -oc ${TheDirectory}/Motif/${Test}/Denovo -db ${MotifDatabase} ${Sequences} 
 	</executable>
     </program>
@@ -25,6 +26,7 @@
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
 	<arg name="Test" required="true" description="Working Directory"/>	
 	<arg name="meme" required="true" description="Working Directory"/>
+	<arg name="perllibs" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-		export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
+		export R_LIBS=${rlibs}
 		${rexec} --vanilla ${pipelineBase}/RScripts/R_RunGenometricCorr.r ${SampleName} ${SampleName2} ${OutFile} ${lengths}
 	</executable>
     </program>
@@ -29,6 +29,7 @@
 	<arg name="lengths" required="true" description="Working Directory"/>
 	<arg name="rexec" required="true" description="Working Directory"/>
 	<arg name="pipelineBase" required="true" description="Working Directory"/>
+	<arg name="rlibs" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

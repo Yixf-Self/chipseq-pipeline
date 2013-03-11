@@ -9,6 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Motif/${Test}/
+	export PYTHONPATH=${pythonlibs}
 	${python} ${pipelineBase}/PythonScripts/ExtractSequences.py ${PeakFile} ${Fasta} ${OutFile}
 	</executable>
     </program>
@@ -27,6 +28,7 @@
 	<arg name="Test" required="true" description="Working Directory"/>
 	<arg name="python" required="true" description="Working Directory"/>
 	<arg name="pipelineBase" required="true" description="Working Directory"/>
+	<arg name="pythonlibs" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

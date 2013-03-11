@@ -9,7 +9,7 @@
     <program type="commandLine">
         <executable>
 	mkdir -p ${TheDirectory}/Fragment_Lengths
-	export R_LIBS='/home/mib-cri/software/R-2.14.0/library'
+	export R_LIBS=${rlibs}
 	${rexec} --vanilla ${pipelineBase}/RScripts/R_GetFragLength.r  ${bam_Proc} ${TheDirectory} 
 	</executable>
     </program>
@@ -26,6 +26,7 @@
 	<arg name="TheDirectory" required="true" description="Working Directory"/>
 	<arg name="rexec" required="true" description="R executable"/>
 	<arg name="pipelineBase" required="true" description="pipeline base"/>
+	<arg name="rlibs" required="true" description="pipeline base"/>
     </arguments>
 
 </task:task>

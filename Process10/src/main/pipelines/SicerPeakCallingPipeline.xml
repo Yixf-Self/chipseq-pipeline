@@ -36,6 +36,7 @@
               <arg name="GapSize">${GapSize}</arg>
               <arg name="FDR">${FDR}</arg>
               <arg name="sicerexec">${sicerexec}</arg>
+              <arg name="pythonlibs">${pythonlibs}</arg>
     	</arguments> 
             
 	</task>

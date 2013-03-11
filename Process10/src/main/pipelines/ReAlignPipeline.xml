@@ -103,7 +103,7 @@
 		<arg name="python">${python}</arg>			
 		<arg name="samtools">${samtools}</arg>
 		<arg name="pipelineBase">${pipelineBase}</arg>
-
+		<arg name="pythonlibs">${pythonlibs}</arg>
 	    	</arguments> 
        	  </task>
 

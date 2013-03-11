@@ -8,6 +8,7 @@
 
     <program type="commandLine">
         <executable>
+		export R_LIBS=${rlibs}
 		${R_Executable}  --vanilla ${pipelineBase}/RScripts/R_PeakProfile_Main3.r ${WorkflowRunID} ${Config} ${PeakCaller}
 	</executable>
     </program>
@@ -25,6 +26,7 @@
 	<arg name="R_Executable" required="true" description="R for workflow"/>
 	<arg name="PeakCaller" required="true" description="Which PeakCaller was used.."/>
 	<arg name="pipelineBase" required="true" description="R for workflow"/>
+	<arg name="rlibs" required="true" description="R for workflow"/>
     </arguments>
 
 </task:task>

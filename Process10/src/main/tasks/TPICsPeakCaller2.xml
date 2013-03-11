@@ -10,6 +10,7 @@
         <executable>
 	mkdir -p ${TestName}
 	cd ${TestName}
+	export R_LIBS=${rlibs}
 	${perl} ${tpicscoverage} ${shiftSize} ${TheDirectory}/bamFiles/${TestBed} ${GenomeForTPICS} ${TestName}
 	${perl} ${tpicszeta} ${shiftSize} ${Width} ${TheDirectory}/bamFiles/${TestBed} ${TheDirectory}/bamFiles/${ControlBed} ${TestName} ${TheWideScaleWidth}
 	${rexec} ${tpics} ${shiftSize} ${GenomeForTPICS}
@@ -37,6 +38,7 @@
        <arg name="tpicszeta" required="true" description="genome." />
        <arg name="tpicscoverage" required="true" description="genome." />
        <arg name="rexec" required="true" description="genome." />
+       <arg name="rlibs" required="true" description="genome." />
     </arguments>
 
 </task:task>

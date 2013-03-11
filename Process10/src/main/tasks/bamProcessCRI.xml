@@ -8,6 +8,7 @@
 
     <program type="commandLine">
         <executable>
+	export PYTHONPATH=${pythonlibs}
 	mkdir -p ${TheDirectory}/Coverage
 	${python} ${pipelineBase}/PythonScripts/CRI_BamProcess.py ${bam} ${genome} ${excludedfile} ${seqdict} ${ExcludedFlag} ${DupFlag} ${MapQFlag}
 	</executable>
@@ -32,6 +33,7 @@
 	<arg name="MapQFlag" required="true" description="MapQ Flag"/>
 	<arg name="python" required="true" description="python executable"/>
 	<arg name="pipelineBase" required="true" description="pipeline base"/>
+	<arg name="pythonlibs" required="true" description="pipeline base"/>
     </arguments>
 
 </task:task>

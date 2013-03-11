@@ -8,8 +8,8 @@
 
     <program type="commandLine">
         <executable>
-		export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
-		/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript --vanilla /lustre/mib-cri/carrol09/Work/MyPipe/Process10/RScripts/R_RunGenometriCorr.r ${SampleName} ${SampleName2} ${OutFile} 
+		export R_LIBS=${rlibs}
+		${rexec} --vanilla ${pipelineBase}/RScripts/R_RunGenometriCorr.r ${SampleName} ${SampleName2} ${OutFile} 
 	</executable>
     </program>
 
@@ -26,6 +26,9 @@
 
     <arguments>
 	<arg name="OutName" required="true" description="Working Directory"/>
+	<arg name="rlibs" required="true" description="Working Directory"/>
+	<arg name="rexec" required="true" description="Working Directory"/>
+	<arg name="pipelineBase" required="true" description="Working Directory"/>
     </arguments>
 
 </task:task>

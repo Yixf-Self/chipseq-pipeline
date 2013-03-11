@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-		export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
+		export R_LIBS=${rlibs}
 		${rexec} ${pipelineBase}/RScripts/R_TSS_AverageCoverage.r ${bam_processed} ${TheDirectory}/Coverage/ ${genomeName}
 
 	</executable>
@@ -28,6 +28,7 @@
         <arg name="genomeName" required="true" description="genome." />
         <arg name="rexec" required="true" description="genome." />
         <arg name="pipelineBase" required="true" description="genome." />
+	<arg name="rlibs" required="true" description="pipeline base"/>
     </arguments>
 
 </task:task>

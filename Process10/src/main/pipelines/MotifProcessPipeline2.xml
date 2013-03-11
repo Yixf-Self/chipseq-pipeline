@@ -33,6 +33,7 @@
 	   <arg name="SamplePeakDir">${SamplePeakDir}</arg>
 	   <arg name="rexec">${rexec}</arg>
     	   <arg name="pipelineBase">${pipelineBase}</arg>
+    	   <arg name="rlibs">${rlibs}</arg>
     	</arguments> 
          </task>
 
@@ -58,7 +59,7 @@
     	    <arg name="Test">${Test}</arg>
     	    <arg name="python">${python}</arg>
     	    <arg name="pipelineBase">${pipelineBase}</arg>
-
+    	    <arg name="pythonlibs">${pythonlibs}</arg>
     	</arguments> 
          </task>
 
@@ -85,7 +86,7 @@
     	    <arg name="TheDirectory">${PeakDirectory}</arg>
     	    <arg name="Test">${Test}</arg> 
     	    <arg name="meme">${meme}</arg> 
-   	    
+    	    <arg name="perllibs">${perllibs}</arg>  	    
     	</arguments> 
          </task>
 
@@ -110,6 +111,7 @@
     	    <arg name="TheDirectory">${PeakDirectory}</arg>
     	    <arg name="Test">${Test}</arg>    	    
     	    <arg name="ame">${ame}</arg>  
+    	    <arg name="perllibs">${perllibs}</arg>
     	</arguments> 
          </task>
 

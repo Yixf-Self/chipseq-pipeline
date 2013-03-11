@@ -37,6 +37,7 @@
 	    <arg name="GenomeForMacs">${Genome}</arg>
 	    <arg name="Mfold">${Mfold}</arg>
 	    <arg name="shiftSize">${shiftSize}</arg>
+	    <arg name="pythonlibs">${pythonlibs}</arg>
     	</arguments> 
             
 	</task>

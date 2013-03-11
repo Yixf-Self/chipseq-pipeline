@@ -8,6 +8,7 @@
 
     <program type="commandLine">
         <executable>
+		export R_LIBS=${rlibs}
 		${R_Executable}  --vanilla ${pipelineBase}/RScripts/R_MacsPeakCall_Main2.r ${WorkflowRunID} ${Config}
 	</executable>
     </program>
@@ -24,6 +25,7 @@
 	<arg name="WorkflowDir" required="true" description="Where to look for the workflow output"/>
 	<arg name="R_Executable" required="true" description="R for workflow"/>
 	<arg name="pipelineBase" required="true" description="R for workflow"/>
+	<arg name="rlibs" required="true" description="R for workflow"/>
     </arguments>
 
 </task:task>

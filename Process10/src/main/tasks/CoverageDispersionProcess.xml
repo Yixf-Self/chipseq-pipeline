@@ -8,7 +8,7 @@
 
     <program type="commandLine">
         <executable>
-	export R_LIBS='/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/library/'
+	export R_LIBS=${rlibs}
 	${rexec} ${pipelineBase}/RScripts/R_CoverageDispersion.r ${bam_processed} ${TheDirectory}
 	</executable>
     </program>
@@ -27,6 +27,7 @@
         <arg name="genomeName" required="true" description="genome." />
 	 <arg name="rexec" required="true" description="r executable"/>
         <arg name="pipelineBase" required="true" description="Base directory of pipeline." />
+	<arg name="rlibs" required="true" description="pipeline base"/>
     </arguments>
 
 </task:task>

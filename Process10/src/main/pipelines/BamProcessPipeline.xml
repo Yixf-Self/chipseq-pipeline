@@ -34,6 +34,7 @@
    	    <arg name="MapQFlag">${MapQFlag}</arg>
    	    <arg name="python">${python}</arg>
    	    <arg name="pipelineBase">${pipelineBase}</arg>
+   	    <arg name="pythonlibs">${pythonlibs}</arg>
 
     	</arguments> 
          </task>
@@ -65,6 +66,7 @@
 			    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
 			    	    <arg name="rexec">${rexec}</arg>
 			   	    <arg name="pipelineBase">${pipelineBase}</arg>
+			   	    <arg name="rlibs">${rlibs}</arg>
 				</arguments> 
 			
 	        </task>
@@ -86,6 +88,7 @@
 			    	    <arg name="TheDirectory">${WorkingDirectory}</arg>
 			    	    <arg name="rexec">${rexec}</arg>
 			   	    <arg name="pipelineBase">${pipelineBase}</arg>
+			   	    <arg name="rlibs">${rlibs}</arg>
 				</arguments> 
 			
 	        </task>
