@@ -482,6 +482,7 @@
 
 	<inputs>
        	<input name="Config">${Config}</input>
+		<input name="Tracker0">${WorkflowDir}/${PathwayTracker}_BamProfile_Main_2.txt</input>
 		<input name="Tracker1">${WorkflowDir}/${PathwayTracker}_MacsPeakCall_Main_2.txt</input>
 		<input name="Tracker2">${WorkflowDir}/${PathwayTracker}_SicerPeakCall_Main_2.txt</input>
 		<input name="Tracker3">${WorkflowDir}/${PathwayTracker}_TPICsPeakCall_Main_2.txt</input>
