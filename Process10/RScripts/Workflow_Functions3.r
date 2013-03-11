@@ -325,6 +325,32 @@ GetExecConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   )
   return(PLExec)
 }
+
+GetLibraryConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  rlibs <- ConfigFile[ConfigFile[,2] %in% "rlibs",3]
+  pythonlibs <- ConfigFile[ConfigFile[,2] %in% "pythonlibs",3]
+  perllibs <- ConfigFile[ConfigFile[,2] %in% "perllibs",3]
+  javalibs <- ConfigFile[ConfigFile[,2] %in% "javalibs",3]
+
+  setClass("LibraryConfig", representation(
+  rlibs = "character",pythonlibs = "character",perllibs = "character",javalibs = "character"
+  ))
+  PLLibrary <- new("LibraryConfig",
+  rlibs = rlibs,pythonlibs = pythonlibs,perllibs = perllibs,javalibs = javalibs)
+  return(PLLibrary)
+}
+
+getLibraryPath <- function(LibraryToRun,WkgDir=getwd(),Config="Config"){
+   Libraries <- GetLibraryConfig(WkgDir,Config)
+   LibraryPath <- slot(Libraries,paste(LibraryToRun,sep=""))
+   return(LibraryPath)
+}
+
+
 getExecPath <- function(ExecToRun,WkgDir=getwd(),Config="Config"){
    Execs <- GetExecConfig(WkgDir,Config)
    ExecPath <- slot(Execs,paste(ExecToRun,sep=""))
@@ -362,15 +388,17 @@ GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   acrosspeakspipeline  <- ConfigFile[ConfigFile[,2] %in% "acrosspeakspipeline",3]
   sicerpeakcallpipeline  <- ConfigFile[ConfigFile[,2] %in% "sicerpeakcallpipeline",3]  
   tpicspeakcallpipeline  <- ConfigFile[ConfigFile[,2] %in% "tpicspeakcallpipeline",3]
+  mainreportpipeline  <- ConfigFile[ConfigFile[,2] %in% "mainreportpipeline",3]
+  
     
   setClass("PipelinesConfig", representation(
   mainpipeline = "character",bamfetchpipeline = "character",checkgenomepipeline = "character",fqfetchpipeline = "character",alignpipeline = "character",mergingpipeline = "character",bamprocesspipeline="character",bamprofilepipeline="character",macspeakcallpipeline="character",peakprofilepipeline="character",
-  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character",tpicspeakcallpipeline = "character",sicerpeakcallpipeline = "character"
+  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character",tpicspeakcallpipeline = "character",sicerpeakcallpipeline = "character",mainreportpipeline = "character"
 
   ))
   PLPipelines <- new("PipelinesConfig",
   mainpipeline = mainpipeline,bamfetchpipeline = bamfetchpipeline,checkgenomepipeline = checkgenomepipeline,fqfetchpipeline = fqfetchpipeline,alignpipeline = alignpipeline,mergingpipeline = mergingpipeline,bamprocesspipeline=bamprocesspipeline,
-  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline,tpicspeakcallpipeline = tpicspeakcallpipeline,sicerpeakcallpipeline = sicerpeakcallpipeline
+  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline,tpicspeakcallpipeline = tpicspeakcallpipeline,sicerpeakcallpipeline = sicerpeakcallpipeline, mainreportpipeline = mainreportpipeline
   )
   return(PLPipelines)
 }
@@ -782,12 +810,13 @@ RunCheckGenomePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
   pipelineBase <- GetPipelinebase()
   pythonExec <- getExecPath("python")
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
-  
+  pythonlibs <- getLibraryPath("pythonlibs")
+    
 
    
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
-  Variables  <- c(file.path(WkgDir,""),genome,pythonExec,pipelineBase)
-  names(Variables) <- c("WorkingDirectory","genome","python","pipelineBase")
+  Variables  <- c(file.path(WkgDir,""),genome,pythonExec,pipelineBase,pythonlibs)
+  names(Variables) <- c("WorkingDirectory","genome","python","pipelineBase","pythonlibs")
   
   ToGenomify <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"Source_File"] != "NA" & !is.na(SampleSheet[,"Source_File"]),"Source_File"]
   ToGenomify <- gsub(".bam","",ToGenomify[grep("*.bam",ToGenomify)])
@@ -972,6 +1001,7 @@ RunSSRealignmentPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs
   pythonExec <- getExecPath("python")
   samtoolsExec <- getExecPath("samtools")  
   picardExec <- getExecPath("picard")    
+  pythonlibs <- getLibraryPath("pythonlibs")
 
   
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
@@ -994,8 +1024,8 @@ RunSSRealignmentPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs
   GenomeBuild <- GetGenomeBuildFromConfig(WkgDir,ConfigDirectory="Config")
   Specialisations  <- vector("list")
   
-  Variables <- c(WkgDir,PLs@FQDir,TargetGenome,GenomeBuild,bwaExec,pythonExec,javaExec,samtoolsExec,PipelineBase,picardExec)
-  names(Variables) <- c("WorkingDirectory","FQDirectory","GenomeBuild","Genome","bwa","python","java","samtools","pipelineBase","picard")
+  Variables <- c(WkgDir,PLs@FQDir,TargetGenome,GenomeBuild,bwaExec,pythonExec,javaExec,samtoolsExec,PipelineBase,picardExec,pythonlibs)
+  names(Variables) <- c("WorkingDirectory","FQDirectory","GenomeBuild","Genome","bwa","python","java","samtools","pipelineBase","picard","pythonlibs")
   if(nrow(SampleSheetOfThoseToAlign) > 0){ 
     for(i in 1:nrow(SampleSheetOfThoseToAlign)){
       SampleID <- SampleSheetOfThoseToAlign[i,"GenomicsID"]
@@ -1137,6 +1167,8 @@ RunBamProcessPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
   pythonExec <- getExecPath("python")    
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   rExec <- getExecPath("rexec")
+  pythonlibs <- getLibraryPath("pythonlibs")
+  rlibs <- getLibraryPath("rlibs")
 
 
   MapQFlag <- GetMapQFlag(WkgDir,Config)
@@ -1245,6 +1277,8 @@ RunBamProfilePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
   rexec <- getExecPath("rexec")
   bedtools <- getExecPath("bedtools")
   BigWig <- getExecPath("bigwig")
+  pythonlibs <- getLibraryPath("pythonlibs")
+  rlibs <- getLibraryPath("rlibs")
 
 
    
@@ -1252,8 +1286,8 @@ RunBamProfilePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
    genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
    
 #  genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory=Config)
-  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,genome,genomeChrLengths,BigWig,bedtools,rexec,PipelineBase)
-  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeName","genomeFile","BigWig","bedtools","rexec","pipelineBase")
+  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,genome,genomeChrLengths,BigWig,bedtools,rexec,PipelineBase,pythonlibs,rlibs)
+  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeName","genomeFile","BigWig","bedtools","rexec","pipelineBase","pythonlibs","rlibs")
   
   BamProfileFiles <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & SampleSheet[,"Processed_bamFileName"] != "NA" & !is.na(SampleSheet[,"Processed_bamFileName"]) & grepl(".bam",SampleSheet[,"Processed_bamFileName"]),"Processed_bamFileName"]
   BamProfileFiles <- gsub(".bam","",BamProfileFiles)
@@ -1354,6 +1388,7 @@ if(CallPeaksCheck("Macs",WkgDir,Config)){
   bedtools <- getExecPath("bedtools")
   BigWig <- getExecPath("bigwig")
   macs <- getExecPath("macs")
+  pythonlibs <- getLibraryPath("pythonlibs")
 
    
 
@@ -1373,8 +1408,8 @@ if(CallPeaksCheck("Macs",WkgDir,Config)){
 
    SamplesAndInputs[SamplesAndInputs[,3] %in% "Too_few_Reads_To_Calculate" | SamplesAndInputs[,3] %in% "No_Information_Available" |  is.na(SamplesAndInputs[,3]),3] <-  ShiftSizeDefault
 
-  Variables  <- c(file.path(PLs@MacsDir,""),file.path(PLs@BamDir,""),MacsGenome,Mfold,macs,rexec)
-  names(Variables) <- c("Macs_Directory","BamDirectory","Genome","Mfold","macs","rexec")
+  Variables  <- c(file.path(PLs@MacsDir,""),file.path(PLs@BamDir,""),MacsGenome,Mfold,macs,rexec,pythonlibs)
+  names(Variables) <- c("Macs_Directory","BamDirectory","Genome","Mfold","macs","rexec","pythonlibs")
   
 
   if(nrow(SamplesAndInputs) > 0){
@@ -1444,6 +1479,8 @@ if(CallPeaksCheck("Sicer",WkgDir,Config)){
    pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
    rexec <- getExecPath("rexec")
    sicerexec <- getExecPath("sicer")
+   pythonlibs <- getLibraryPath("pythonlibs")
+
    
    ShiftSizeDefault <- 100
    
@@ -1463,8 +1500,8 @@ if(CallPeaksCheck("Sicer",WkgDir,Config)){
 
    SamplesAndInputs[SamplesAndInputs[,3] %in% "Too_few_Reads_To_Calculate" | SamplesAndInputs[,3] %in% "No_Information_Available" | is.na(SamplesAndInputs[,3]),3] <-  ShiftSizeDefault
 
-  Variables  <- c(file.path(PLs@SicerDir,""),file.path(PLs@BamDir,""),WkgDir,GenomeForSicer,sicerexec,WindowSize,GapSize,0.01)
-  names(Variables) <- c("SicerDirectory","BamDirectory","WorkingDirectory","GS","sicerexec","Window","GapSize","FDR")
+  Variables  <- c(file.path(PLs@SicerDir,""),file.path(PLs@BamDir,""),WkgDir,GenomeForSicer,sicerexec,WindowSize,GapSize,0.01,pythonlibs)
+  names(Variables) <- c("SicerDirectory","BamDirectory","WorkingDirectory","GS","sicerexec","Window","GapSize","FDR","pythonlibs")
   
 
   if(nrow(SamplesAndInputs) > 0){
@@ -1536,6 +1573,7 @@ if(CallPeaksCheck("TPICs",WkgDir,Config)){
    tpicszeta <- getExecPath("tpicszeta") 
    tpicscoverage <- getExecPath("tpicscreatecoverage")   
    bedtools <- getExecPath("bedtools")   
+   rlibs <- getLibraryPath("rlibs")
        
    
    ShiftSizeDefault <- 100
@@ -1556,8 +1594,8 @@ if(CallPeaksCheck("TPICs",WkgDir,Config)){
 
    SamplesAndInputs[SamplesAndInputs[,3] %in% "Too_few_Reads_To_Calculate" | SamplesAndInputs[,3] %in% "No_Information_Available" | is.na(SamplesAndInputs[,3]),3] <-  ShiftSizeDefault
 
-  Variables  <- c(file.path(PLs@TPICsDir,""),file.path(PLs@BamDir,""),WkgDir,GenomeForTPICS,min_size,WideScale,bedtools,tpics,tpicszeta,tpicscoverage,rexec,perl)
-  names(Variables) <- c("TPICsDirectory","BamDirectory","WorkingDirectory","GT","min_size","WideScale","bedtools","tpics","tpicszeta","tpicscoverage","rexec",perl)
+  Variables  <- c(file.path(PLs@TPICsDir,""),file.path(PLs@BamDir,""),WkgDir,GenomeForTPICS,min_size,WideScale,bedtools,tpics,tpicszeta,tpicscoverage,rexec,perl,rlibs)
+  names(Variables) <- c("TPICsDirectory","BamDirectory","WorkingDirectory","GT","min_size","WideScale","bedtools","tpics","tpicszeta","tpicscoverage","rexec","perl","rlibs")
   
 
   if(nrow(SamplesAndInputs) > 0){
@@ -1631,14 +1669,14 @@ if(CallProfilesCheck(Caller,WkgDir,Config)){
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   rexec <- getExecPath("rexec")
   bedtools <- getExecPath("bedtools")
- 
+  rlibs <- getLibraryPath("rlibs")
   
   
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config") 
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
   fastaFromGenome <- GetGenomeBuildFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,bedtools,rexec,PipelineBase)
-  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","fastafile","bedtools","rexec","pipelineBase")
+  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,bedtools,rexec,PipelineBase,rlibs)
+  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","fastafile","bedtools","rexec","pipelineBase","rlibs")
   
   JustOfInterest <- SampleSheet[!is.na(SampleSheet[,PeakFileNameColumn]) & !SampleSheet[,PeakFileNameColumn] %in% "NA",]
 
@@ -1747,7 +1785,10 @@ if(CallMotifsCheck(Caller,WkgDir,Config)){
   rexec <- getExecPath("rexec")
   meme <- getExecPath("meme")
   ame <- getExecPath("ame")
-  
+  rlibs <- getLibraryPath("rlibs")
+  perllibs <- getLibraryPath("perllibs")
+  pythonlibs <- getLibraryPath("pythonlibs")
+    
    
   
   
@@ -1756,8 +1797,8 @@ if(CallMotifsCheck(Caller,WkgDir,Config)){
   genome <- GetGenomeFromConfig(WkgDir,ConfigDirectory="Config") 
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
   fastaFromGenome <- GetGenomeBuildFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,NPeaks,RankOrder,ColumnIndexForRank,MemeFormatdb,ame,meme,rexec,PipelineBase,pythonExec)
-  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","Fasta","NPeaks","RankOrder","RankColumn","MotifDatabaseLocation","ame","meme","rexec","pipelineBase","python")
+  Variables  <- c(WkgDir,file.path(PeakDirectory,""),file.path(BamDir,""),genome,genomeChrLengths,fastaFromGenome,NPeaks,RankOrder,ColumnIndexForRank,MemeFormatdb,ame,meme,rexec,PipelineBase,pythonExec,rlibs,perllibs)
+  names(Variables) <- c("WorkingDirectory","PeakDirectory","BamDirectory","genome","genomeFile","Fasta","NPeaks","RankOrder","RankColumn","MotifDatabaseLocation","ame","meme","rexec","pipelineBase","python","rlibs","perllibs")
   
   JustOfInterest <- SampleSheet[!is.na(SampleSheet[,PeakFileNameColumn]) & !SampleSheet[,PeakFileNameColumn] %in% "NA",]
 if(nrow(JustOfInterest) > 0){
@@ -1920,13 +1961,14 @@ if(CallBetweenPeaksCheck(Caller,WkgDir,Config)){
   pythonExec <- getExecPath("python")    
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   rexec <- getExecPath("rexec")
+  rlibs <- getLibraryPath("rlibs")
 
 
   
   
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,file.path(PeakDirectory,""),genomeChrLengths,PipelineBase,rexec)
-  names(Variables) <- c("WorkingDirectory","PeakDirectory","lengths","pipelineBase","rexec")
+  Variables  <- c(WkgDir,file.path(PeakDirectory,""),genomeChrLengths,PipelineBase,rexec,rlibs)
+  names(Variables) <- c("WorkingDirectory","PeakDirectory","lengths","pipelineBase","rexec","rlibs")
   
   system(paste("mkdir -p ",file.path(PeakDirectory,"Between_Peaks",""),sep=""),wait=T)  
   
@@ -1978,6 +2020,7 @@ RunAcrossPeaksPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
   pythonExec <- getExecPath("python")    
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   rexec <- getExecPath("rexec")
+  rlibs <- getLibraryPath("rlibs")
 
 
   
@@ -1985,8 +2028,8 @@ RunAcrossPeaksPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=7
 
   BamDir <- PLs@BamDir
   genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
-  Variables  <- c(WkgDir,rexec,PipelineBase)
-  names(Variables) <- c("WorkingDirectory","rexec","pipelineBase")
+  Variables  <- c(WkgDir,rexec,PipelineBase,rlibs)
+  names(Variables) <- c("WorkingDirectory","rexec","pipelineBase","rlibs")
   
   system(paste("mkdir -p ",file.path(WkgDir,"Peaks","Across_Peaks",""),sep=""),wait=T)  
   GeneralPeakDir <- file.path(WkgDir,"Peaks","Across_Peaks","")
@@ -2088,14 +2131,15 @@ RunMainPipeline <- function(WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocat
   javaExec <- getExecPath("java")
   mode <- tolower(getWorkflowParam("Mode"))
   PipelineBase <- GetPipelinebase()
+  rlibs <- getLibraryPath("rlibs")
   
   pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
   WorkFlowDirectory <- PLs@WorkFlowDir
   Config2 <- file.path(WkgDir,Config,"config.ini")
   #R_executable <- "/lustre/mib-cri/carrol09/Work/MyPipe/R/R-2.15.0/bin/Rscript"
   RandomTrackerNumber <-  getRandString()
-  Variables  <- c(WorkFlowDirectory,RandomTrackerNumber,Config2,R_executable,PipelineBase)
-  names(Variables) <- c("WorkflowDir","PathwayTracker","Config","R_Executable","pipelineBase")
+  Variables  <- c(WorkFlowDirectory,RandomTrackerNumber,Config2,R_executable,PipelineBase,rlibs)
+  names(Variables) <- c("WorkflowDir","PathwayTracker","Config","R_Executable","pipelineBase","rlibs")
   Specialisations <- vector("list")
   #Specialisations[[1]] <- "/lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20121114_MontoyaAR_DN_Hes6ChIP/bamFiles/ID-LNCAP-LM-HES6-BICALUTAMIDE-INPUT-D26.bwa.bam"
   
@@ -2108,19 +2152,28 @@ RunMainPipeline <- function(WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocat
 
 RunReportingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocations,Config="Config"){
 
+
+  Pipeline <- getPipelinesPath("mainreportpipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  R_executable <- getExecPath("rexec")  
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()
+  rlibs <- getLibraryPath("rlibs")
+
   speicalNames <-   vector("character")
   Specialisations  <- vector("list")
   Specialisations[[1]] <- SampleSheet
   names(Specialisations[[1]]) <- c("SampleSheet")
   names(Specialisations) <-  "ReportMaker"
-  Variables <- WkgDir
-  names(Variables) <- "WorkingDirectory"
+  Variables <- c(WkgDir,R_executable,PipelineBase,rlibs)
+  names(Variables) <- c("WorkingDirectory","rexec","pipelineBase","rlibs")
       
-  Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MainReportPipeline2.xml"  
+  #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MainReportPipeline2.xml"  
   PipeName <- paste("SS_MakeReport",sep="")
   SSBetweenPeaks_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
   saveXML(SSBetweenPeaks_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_MakeReport.xml"))
-  system(paste("java -jar /lustre/mib-cri/carrol09/MyPipe/workflow-all-1.2-SNAPSHOT.jar --mode=lsf ",file.path(PLs@WorkFlowDir,paste("SS_MakeReport.xml",sep="")),sep=""),wait=T)
+  system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,paste("SS_MakeReport.xml",sep="")),sep=""),wait=T)
 
 }      	
 
