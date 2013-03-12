@@ -2163,7 +2163,7 @@ RunReportingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
 
   speicalNames <-   vector("character")
   Specialisations  <- vector("list")
-  Specialisations[[1]] <- SampleSheet
+  Specialisations[[1]] <- "SampleSheet.csv"
   names(Specialisations[[1]]) <- c("SampleSheet")
   names(Specialisations) <-  "ReportMaker"
   Variables <- c(WkgDir,R_executable,PipelineBase,rlibs)
