@@ -8,7 +8,7 @@
 
     <tasks>
 
-      	        <task name="MakeHTMLReportProcess2" type="MakeHTMLReportProcess2">
+      	        <task name="MainHTMLReportProcess2" type="MainHTMLReportProcess2">
 
 			<resources>
 	              	<memory>8G</memory>
