@@ -2160,6 +2160,9 @@ RunReportingPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,
   mode <- tolower(getWorkflowParam("Mode"))
   PipelineBase <- GetPipelinebase()
   rlibs <- getLibraryPath("rlibs")
+  
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+
 
   speicalNames <-   vector("character")
   Specialisations  <- vector("list")
