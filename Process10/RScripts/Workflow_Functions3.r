@@ -1175,8 +1175,8 @@ RunBamProcessPipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75
   DupFlag <- GetDupFlag(WkgDir,Config)
   ExcludedFlag <- GetExcludedFlag(WkgDir,Config)  
   
-  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,"Dummy",DupFlag,ExcludedFlag,MapQFlag,pythonExec,PipelineBase,rExec)
-  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeFile","DupFlag","ExcludedFlag","MapQFlag","python","pipelineBase","rexec")
+  Variables  <- c(file.path(WkgDir,""),PLs@BamDir,"Dummy",DupFlag,ExcludedFlag,MapQFlag,pythonExec,PipelineBase,rExec,pythonlibs,rlibs)
+  names(Variables) <- c("WorkingDirectory","BamDirectory","genomeFile","DupFlag","ExcludedFlag","MapQFlag","python","pipelineBase","rexec","pythonlibs","rlibs")
   
   BamFiles <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe" & !SampleSheet[,"Source_File"] %in% "NA" & !is.na(SampleSheet[,"Source_File"]) & grepl(".bam",SampleSheet[,"Source_File"]) & !grepl("_Processed.bam",SampleSheet[,"Source_File"]),"Source_File"]
   BamFiles <- gsub(".bam","",BamFiles)
