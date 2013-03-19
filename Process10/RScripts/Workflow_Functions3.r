@@ -367,6 +367,16 @@ GetTFDB <- function(WkgDir=getwd(),ConfigDirectory="Config"){
 }  
 
 
+DownSampleCheck <- function(WkgDir=getwd(),ConfigDirectory="Config"){
+  require(raster)
+  ConfigToRead = file.path(WkgDir,ConfigDirectory,"config.ini")
+  ConfigFile <- readIniFile(ConfigToRead)
+  
+  downsampleflag <- ConfigFile[ConfigFile[,2] %in% "downsample",3]
+  return(downsampleflag=="Yes")
+}  
+
+
 GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
 
   require(raster)
@@ -389,16 +399,17 @@ GetPipelinesConfig <- function(WkgDir=getwd(),ConfigDirectory="Config"){
   sicerpeakcallpipeline  <- ConfigFile[ConfigFile[,2] %in% "sicerpeakcallpipeline",3]  
   tpicspeakcallpipeline  <- ConfigFile[ConfigFile[,2] %in% "tpicspeakcallpipeline",3]
   mainreportpipeline  <- ConfigFile[ConfigFile[,2] %in% "mainreportpipeline",3]
+  downsamplepipeline  <- ConfigFile[ConfigFile[,2] %in% "downsamplepipeline",3]  
   
     
   setClass("PipelinesConfig", representation(
   mainpipeline = "character",bamfetchpipeline = "character",checkgenomepipeline = "character",fqfetchpipeline = "character",alignpipeline = "character",mergingpipeline = "character",bamprocesspipeline="character",bamprofilepipeline="character",macspeakcallpipeline="character",peakprofilepipeline="character",
-  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character",tpicspeakcallpipeline = "character",sicerpeakcallpipeline = "character",mainreportpipeline = "character"
+  motifpipeline="character",betweenpeakspipeline = "character",acrosspeakspipeline = "character",tpicspeakcallpipeline = "character",sicerpeakcallpipeline = "character",mainreportpipeline = "character",downsamplepipeline = "character"
 
   ))
   PLPipelines <- new("PipelinesConfig",
   mainpipeline = mainpipeline,bamfetchpipeline = bamfetchpipeline,checkgenomepipeline = checkgenomepipeline,fqfetchpipeline = fqfetchpipeline,alignpipeline = alignpipeline,mergingpipeline = mergingpipeline,bamprocesspipeline=bamprocesspipeline,
-  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline,tpicspeakcallpipeline = tpicspeakcallpipeline,sicerpeakcallpipeline = sicerpeakcallpipeline, mainreportpipeline = mainreportpipeline
+  bamprofilepipeline=bamprofilepipeline,macspeakcallpipeline=macspeakcallpipeline,peakprofilepipeline=peakprofilepipeline,motifpipeline=motifpipeline,betweenpeakspipeline = betweenpeakspipeline,acrosspeakspipeline = acrosspeakspipeline,tpicspeakcallpipeline = tpicspeakcallpipeline,sicerpeakcallpipeline = sicerpeakcallpipeline, mainreportpipeline = mainreportpipeline,downsamplepipeline = downsamplepipeline
   )
   return(PLPipelines)
 }
@@ -2260,3 +2271,79 @@ newXMLNode <- function (name, ..., attrs = NULL, namespace = character(), namesp
     }
     node
 }
+
+
+
+
+RunDownSamplePipeline <- function(SampleSheet,WkgDir=WkgDir,JobString,MaxJobs=75,PLs=PipelineLocations,Config="Config"){
+if(DownSampleCheck(WkgDir,Config)){
+   
+
+  Pipeline <- getPipelinesPath("downsamplepipeline")
+  workflowExec <- getWorkflowParam("Executable")
+  javaExec <- getExecPath("java")
+  mode <- tolower(getWorkflowParam("Mode"))
+  PipelineBase <- GetPipelinebase()   
+  pipelineRun <- paste(javaExec," -jar ",workflowExec," --mode=",mode,sep="")
+  picardExec <- getExecPath("picard")    
+
+   
+    if(GetDupFlag(WkgDir,Config) == "True"){
+      TotalColumn <-  "Unique"
+    }else{
+      TotalColumn <-  "Filtered"   
+    }
+   
+    #genomeChrLengths <- GetChrLengthsFromConfig(WkgDir,ConfigDirectory="Config")
+   SampleSheet <- SampleSheet[SampleSheet[,"Analysis_State"] %in% "RunMe",]
+   SamplesAndInputs <- matrix(data=c(gsub("\\.bam","",SampleSheet[,"Processed_bamFileName"]),gsub("\\.bam","",SampleSheet[match(SampleSheet[,"InputToUse"],SampleSheet[,"SampleName"],incomparable=NA),"Processed_bamFileName"]),as.vector(SampleSheet[,TotalColumn]),as.vector(SampleSheet[match(SampleSheet[,"InputToUse"],SampleSheet[,"SampleName"],incomparable=NA),TotalColumn])),ncol=4,byrow=F,dimnames=list(NULL,c("Samples","Inputs","TotalSample","TotalInput")))
+   SamplesAndInputs <- SamplesAndInputs[!is.na(SamplesAndInputs[,"Inputs"]) & ! as.vector(SamplesAndInputs[,"Samples"]) %in% "No_Processed_Bam",]
+
+   SamplesAndInputs2 <- matrix(data=c(gsub("\\.bam","",SampleSheet[,"Processed_bamFileName"]),gsub("\\.bam","",SampleSheet[match(SampleSheet[,"InputToUse"],SampleSheet[,"GenomicsID"],incomparable=NA),"Processed_bamFileName"]),as.vector(SampleSheet[,TotalColumn]),as.vector(SampleSheet[match(SampleSheet[,"InputToUse"],SampleSheet[,"SampleName"],incomparable=NA),TotalColumn])),ncol=4,byrow=F,dimnames=list(NULL,c("Samples","Inputs","TotalSample","TotalInput")))
+   SamplesAndInputs2 <- SamplesAndInputs2[!is.na(SamplesAndInputs2[,"Inputs"]) & ! as.vector(SamplesAndInputs2[,"Samples"]) %in% "No_Processed_Bam",]
+
+   MakeUniquePeakCalls <- rbind(SamplesAndInputs,SamplesAndInputs2)
+   MakeUniquePeakCalls <- MakeUniquePeakCalls[match(unique(MakeUniquePeakCalls[,1]),MakeUniquePeakCalls[,1]),]   
+   SamplesAndInputs <- matrix(MakeUniquePeakCalls,ncol=4,byrow=F)
+#   SamplesAndInputs2 <- SamplesAndInputs
+#   SamplesAndInputs2[,3] <- SamplesAndInputs[,4]
+#   SamplesAndInputs2[,4] <- SamplesAndInputs[,3]
+#   SamplesAndInputs <- SamplesAndInputs2   
+   
+   Prob <- as.numeric(as.vector(SamplesAndInputs[,3]))/as.numeric(as.vector(SamplesAndInputs[,4]))
+#   SamplesAndInputs[SamplesAndInputs[,3] %in% "Too_few_Reads_To_Calculate" | SamplesAndInputs[,3] %in% "No_Information_Available" |  is.na(SamplesAndInputs[,3]),3] <-  ShiftSizeDefault
+   SamplesAndInputs <- cbind(SamplesAndInputs,Prob)
+   SamplesAndInputs <- SamplesAndInputs[as.numeric(as.vector(SamplesAndInputs[,5])) < 1,]
+   
+   Variables  <- c(file.path(PLs@BamDir,""),javaExec,picardExec)
+   names(Variables) <- c("BamDirectory","java","picard")
+  
+
+  if(nrow(SamplesAndInputs) > 0){
+    Specialisations  <- vector("list",length=nrow(SamplesAndInputs))
+    for(i in 1:length(Specialisations)){
+      Specialisations[[i]] <- c(as.vector(SamplesAndInputs[i,1]),as.vector(SamplesAndInputs[i,2]),as.vector(SamplesAndInputs[i,5]))
+      names(Specialisations[[i]]) <- c("Sample","Input","prob")  
+    } 
+    names(Specialisations) <-  paste(as.vector(SamplesAndInputs[,1]),"_Downsample",sep="") 
+  
+    #Pipeline = "/lustre/mib-cri/carrol09/Work/MyPipe/Process10/src/main/pipelines/MacsPeakCallingPipeline.xml"  
+    PipeName <- "SS_DownSample"
+    SSMacsPeak_WfMeta <- MakeWorkFlowXML(JobString,Variables,Specialisations,Pipeline,PipeName,WkgDir,Config,maxJobs=75)
+    saveXML(SSMacsPeak_WfMeta,file=file.path(PLs@WorkFlowDir,"SS_Downsample.xml"))
+    system(paste(pipelineRun," ",file.path(PLs@WorkFlowDir,"SS_Downsample.xml"),sep=""),wait=T)
+}
+  AllDownSampledFiles <- dir(PLs@BamDir,pattern="downsampled.*bam$",full.name=F)
+  AllDownSampledFiles <-  AllDownSampledFiles[-grep("temp\\.bam",AllDownSampledFiles)]
+ 
+  #SampleSheet <- ReadAndLock(file.path(WkgDir,"SampleSheet.csv"),WkdDir,SAF=F,napTime=5)
+
+  for(i in 1:nrow(SampleSheet)){
+	 if(gsub(".bam","",SampleSheet[i,"Processed_bamFileName"]) %in% gsub(".bam$","",gsub(".*downsampled_by_","",basename(AllDownSampledFiles)))){
+	   	SampleSheet[i,"InputFileNameToUse"] <- AllDownSampledFiles[gsub(".bam$","",gsub(".*downsampled_by_","",basename(AllDownSampledFiles))) %in% gsub(".bam","",SampleSheet[i,"Processed_bamFileName"])]
+		  
+      }
+	}
+}
+        return(SampleSheet)
+}        
