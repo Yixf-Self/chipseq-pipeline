@@ -10,7 +10,7 @@
         <executable>
 
 	mkdir -p ${TheDirectory}/Peaks/PeakProfiles
-	${bedtools}/slopBed -i ${bed} -g ${genomeFile} -b ${ReadLength} | mergeBed  -i stdin > ${mergedpeakbed}
+	${bedtools}/slopBed -i ${bed} -g ${genomeFile} -b ${ReadLength} | ${bedtools}/mergeBed  -i stdin > ${mergedpeakbed}
 	</executable>
     </program>
 
