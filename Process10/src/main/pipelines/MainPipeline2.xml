@@ -455,6 +455,9 @@
 
 	 <task name="HTMLReportMain" type="HTMLReportMain">
        <depends>
+       
+       		<task>BamProfileMain</task>
+       
 		<task>MacsPeakCallMain</task>
 		<task>SicerPeakCallMain</task>
 		<task>TPICsPeakCallMain</task>
