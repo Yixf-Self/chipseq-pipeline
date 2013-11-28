@@ -1,7 +1,0 @@
-#!/bin/bash	
-
-	perl /lustre/mib-cri/carrol09/Work/MyPipe/Process10/PerlScripts/SLXID_PerlPickUp.pl /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp
-	perl /lustre/mib-cri/carrol09/Work/MyPipe/Process10/PerlScripts/Project_PerlPickUp.pl /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp
-	perl /lustre/mib-cri/carrol09/Work/MyPipe/Process10/PerlScripts/SLXID_StartToPipeline.pl /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp
-	perl /lustre/mib-cri/carrol09/Work/MyPipe/Process10/PerlScripts/Project_StartToPipeline.pl /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp
-	bash /lustre/mib-cri/carrol09/Work/MyPipe/Process10/BashScripts/CatLimmsInfo.sh  /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp/Projects_ActualLocations.txt /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp/SLXIDs_ActualLocations.txt /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp/ActualLocations.txt /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp/Projects_LimmsInfo.txt /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp/SLXIDs_LimmsInfo.txt /lustre/mib-cri/carrol09/Work/PipelinePracticeSet/20111109_RossAdams_DN_HNF1bChIP/Temp/Lims_Info.txt
